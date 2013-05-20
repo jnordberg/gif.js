@@ -7,7 +7,7 @@ require './vendor/mootools.js'
 async = require 'async'
 ready = require './vendor/ready.js'
 
-_URL = URL or webkitURL
+_URL = window.URL or window.webkitURL
 now = window.performance?.now?.bind(window.performance) or Date.now
 
 loadImage = (src, callback) ->
