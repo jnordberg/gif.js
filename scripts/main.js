@@ -4118,7 +4118,7 @@ Element.alias({position: 'setPosition'}); //compatability
 
 },{}],3:[function(require,module,exports){
 (function() {
-  var Modernizr, async, loadImage, now, ready, setupDemo, _URL, _ref, _ref1;
+  var Modernizr, async, blobURLSupport, buildDataURL, loadImage, now, ready, setupDemo, _ref, _ref1, _ref2;
 
   require('browsernizr/test/css/rgba');
 
@@ -4132,9 +4132,27 @@ Element.alias({position: 'setPosition'}); //compatability
 
   ready = require('./vendor/ready.js');
 
-  _URL = window.URL || window.webkitURL;
-
   now = ((_ref = window.performance) != null ? (_ref1 = _ref.now) != null ? _ref1.bind(window.performance) : void 0 : void 0) || Date.now;
+
+  blobURLSupport = ((_ref2 = window.URL) != null ? _ref2.createObjectURL : void 0) != null;
+
+  buildDataURL = (function() {
+    var charMap, i, _i;
+
+    charMap = {};
+    for (i = _i = 0; _i < 256; i = ++_i) {
+      charMap[i] = String.fromCharCode(i);
+    }
+    return function(data) {
+      var str, _j, _ref3;
+
+      str = '';
+      for (i = _j = 0, _ref3 = data.length; 0 <= _ref3 ? _j < _ref3 : _j > _ref3; i = 0 <= _ref3 ? ++_j : --_j) {
+        str += charMap[data[i]];
+      }
+      return 'data:image/gif;base64,' + btoa(str);
+    };
+  })();
 
   loadImage = function(src, callback) {
     var img;
@@ -4172,10 +4190,14 @@ Element.alias({position: 'setPosition'}); //compatability
     gif.on('start', function() {
       return startTime = now();
     });
-    gif.on('finished', function(blob) {
+    gif.on('finished', function(blob, data) {
       var delta;
 
-      renderimg.src = _URL.createObjectURL(blob);
+      if (blobURLSupport) {
+        renderimg.src = URL.createObjectURL(blob);
+      } else {
+        renderimg.src = buildDataURL(data);
+      }
       delta = now() - startTime;
       return logel.set('text', "Rendered " + images.length + " frame(s) at q" + gif.options.quality + " in " + (delta.toFixed(2)) + "ms");
     });
@@ -4209,13 +4231,13 @@ Element.alias({position: 'setPosition'}); //compatability
     delay = element.getElement('.delay');
     if (delay != null) {
       delay.getElement('input').addEvent('change', function() {
-        var image, value, _i, _len, _ref2;
+        var image, value, _i, _len, _ref3;
 
         value = parseInt(this.value);
         delay.getElement('.value').set('text', value + 'ms');
-        _ref2 = gif.images;
-        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          image = _ref2[_i];
+        _ref3 = gif.images;
+        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+          image = _ref3[_i];
           image.delay = value;
         }
         gif.abort();
@@ -4253,12 +4275,12 @@ Element.alias({position: 'setPosition'}); //compatability
   };
 
   ready(function() {
-    var demo, _i, _len, _ref2, _results;
+    var demo, _i, _len, _ref3, _results;
 
-    _ref2 = document.body.querySelectorAll('.demo');
+    _ref3 = document.body.querySelectorAll('.demo');
     _results = [];
-    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-      demo = _ref2[_i];
+    for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+      demo = _ref3[_i];
       _results.push(setupDemo(demo));
     }
     return _results;
@@ -4267,50 +4289,7 @@ Element.alias({position: 'setPosition'}); //compatability
 }).call(this);
 
 
-},{"./vendor/mootools.js":1,"./vendor/ready.js":2,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],4:[function(require,module,exports){
-var Modernizr = require('./../../lib/Modernizr');
-var createElement = require('./../../lib/createElement');
-
-
-  // css-tricks.com/rgba-browser-support/
-
-  Modernizr.addTest('rgba', function() {
-    var elem = createElement('div');
-    var style = elem.style;
-    style.cssText = 'background-color:rgba(150,255,150,.5)';
-
-    return ('' + style.backgroundColor).indexOf('rgba') > -1;
-  });
-
-
-},{"./../../lib/Modernizr":8,"./../../lib/createElement":9}],5:[function(require,module,exports){
-var Modernizr = require('./../../lib/Modernizr');
-var testAllProps = require('./../../lib/testAllProps');
-var testStyles = require('./../../lib/testStyles');
-var docElement = require('./../../lib/docElement');
-
-
-  Modernizr.addTest('csstransforms3d', function() {
-    var ret = !!testAllProps('perspective');
-
-    // Webkit's 3D transforms are passed off to the browser's own graphics renderer.
-    //   It works fine in Safari on Leopard and Snow Leopard, but not in Chrome in
-    //   some conditions. As a result, Webkit typically recognizes the syntax but
-    //   will sometimes throw a false positive, thus we must do a more thorough check:
-    if ( ret && 'webkitPerspective' in docElement.style ) {
-
-      // Webkit allows this media query to succeed only if the feature is enabled.
-      // `@media (transform-3d),(-webkit-transform-3d){ ... }`
-      // If loaded inside the body tag and the test element inherits any padding, margin or borders it will fail #740
-      testStyles('@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0}}', function( node, rule ) {
-        ret = node.offsetLeft === 9 && node.offsetHeight === 5;
-      });
-    }
-    return ret;
-  });
-
-
-},{"./../../lib/Modernizr":8,"./../../lib/testAllProps":10,"./../../lib/docElement":11,"./../../lib/testStyles":12}],13:[function(require,module,exports){
+},{"./vendor/mootools.js":1,"./vendor/ready.js":2,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5319,12 +5298,50 @@ process.chdir = function (dir) {
 }());
 
 })(require("__browserify_process"))
-},{"__browserify_process":13}],11:[function(require,module,exports){
+},{"__browserify_process":8}],4:[function(require,module,exports){
+var Modernizr = require('./../../lib/Modernizr');
+var createElement = require('./../../lib/createElement');
 
-  var docElement = document.documentElement;
-  
-module.exports = docElement;
-},{}],6:[function(require,module,exports){
+
+  // css-tricks.com/rgba-browser-support/
+
+  Modernizr.addTest('rgba', function() {
+    var elem = createElement('div');
+    var style = elem.style;
+    style.cssText = 'background-color:rgba(150,255,150,.5)';
+
+    return ('' + style.backgroundColor).indexOf('rgba') > -1;
+  });
+
+
+},{"./../../lib/Modernizr":9,"./../../lib/createElement":10}],5:[function(require,module,exports){
+var Modernizr = require('./../../lib/Modernizr');
+var testAllProps = require('./../../lib/testAllProps');
+var testStyles = require('./../../lib/testStyles');
+var docElement = require('./../../lib/docElement');
+
+
+  Modernizr.addTest('csstransforms3d', function() {
+    var ret = !!testAllProps('perspective');
+
+    // Webkit's 3D transforms are passed off to the browser's own graphics renderer.
+    //   It works fine in Safari on Leopard and Snow Leopard, but not in Chrome in
+    //   some conditions. As a result, Webkit typically recognizes the syntax but
+    //   will sometimes throw a false positive, thus we must do a more thorough check:
+    if ( ret && 'webkitPerspective' in docElement.style ) {
+
+      // Webkit allows this media query to succeed only if the feature is enabled.
+      // `@media (transform-3d),(-webkit-transform-3d){ ... }`
+      // If loaded inside the body tag and the test element inherits any padding, margin or borders it will fail #740
+      testStyles('@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0}}', function( node, rule ) {
+        ret = node.offsetLeft === 9 && node.offsetHeight === 5;
+      });
+    }
+    return ret;
+  });
+
+
+},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/testStyles":12,"./../../lib/docElement":13}],6:[function(require,module,exports){
 var Modernizr = require('./lib/Modernizr'),
     ModernizrProto = require('./lib/ModernizrProto'),
     classes = require('./lib/classes'),
@@ -5347,12 +5364,25 @@ for (var i = 0; i < Modernizr._q.length; i++) {
 
 module.exports = Modernizr;
 
-},{"./lib/Modernizr":8,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],15:[function(require,module,exports){
+},{"./lib/Modernizr":9,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],13:[function(require,module,exports){
+
+  var docElement = document.documentElement;
+  
+module.exports = docElement;
+},{}],15:[function(require,module,exports){
 
   var classes = [];
   
 module.exports = classes;
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
+require('./fnBind');
+
+
+  var createElement = document.createElement.bind(document);
+  
+
+module.exports = createElement;
+},{"./fnBind":18}],9:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 
 
@@ -5370,15 +5400,7 @@ var ModernizrProto = require('./ModernizrProto');
   
 
 module.exports = Modernizr;
-},{"./ModernizrProto":14}],9:[function(require,module,exports){
-require('./fnBind');
-
-
-  var createElement = document.createElement.bind(document);
-  
-
-module.exports = createElement;
-},{"./fnBind":18}],12:[function(require,module,exports){
+},{"./ModernizrProto":14}],12:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5387,7 +5409,7 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":19}],10:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":19}],11:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var testPropsAll = require('./testPropsAll');
 
@@ -5474,7 +5496,7 @@ var is = require('./is');
   
 
 module.exports = testRunner;
-},{"./tests":21,"./Modernizr":8,"./classes":15,"./is":22}],17:[function(require,module,exports){
+},{"./tests":21,"./Modernizr":9,"./classes":15,"./is":22}],17:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var docElement = require('./docElement');
 
@@ -5514,7 +5536,7 @@ var docElement = require('./docElement');
   
 
 module.exports = setClasses;
-},{"./Modernizr":8,"./docElement":11}],21:[function(require,module,exports){
+},{"./Modernizr":9,"./docElement":13}],21:[function(require,module,exports){
 
   var tests = [];
   
@@ -5645,7 +5667,7 @@ var getBody = require('./getBody');
   
 
 module.exports = injectElementWithStyles;
-},{"./ModernizrProto":14,"./docElement":11,"./getBody":24,"./createElement":9}],20:[function(require,module,exports){
+},{"./ModernizrProto":14,"./docElement":13,"./createElement":10,"./getBody":24}],20:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var cssomPrefixes = require('./cssomPrefixes');
 var is = require('./is');
@@ -5685,15 +5707,7 @@ var testDOMProps = require('./testDOMProps');
   
 
 module.exports = testPropsAll;
-},{"./ModernizrProto":14,"./cssomPrefixes":25,"./is":22,"./testProps":26,"./domPrefixes":27,"./testDOMProps":28}],23:[function(require,module,exports){
-var classes = require('./classes');
-
-
-  var slice = classes.slice;
-  
-
-module.exports = slice;
-},{"./classes":15}],24:[function(require,module,exports){
+},{"./ModernizrProto":14,"./cssomPrefixes":25,"./is":22,"./testProps":26,"./domPrefixes":27,"./testDOMProps":28}],24:[function(require,module,exports){
 var createElement = require('./createElement');
 
 
@@ -5713,7 +5727,15 @@ var createElement = require('./createElement');
   
 
 module.exports = getBody;
-},{"./createElement":9}],25:[function(require,module,exports){
+},{"./createElement":10}],23:[function(require,module,exports){
+var classes = require('./classes');
+
+
+  var slice = classes.slice;
+  
+
+module.exports = slice;
+},{"./classes":15}],25:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 
@@ -5723,16 +5745,6 @@ var omPrefixes = require('./omPrefixes');
   
 
 module.exports = cssomPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],27:[function(require,module,exports){
-var ModernizrProto = require('./ModernizrProto');
-var omPrefixes = require('./omPrefixes');
-
-
-  var domPrefixes = omPrefixes.toLowerCase().split(' ');
-  ModernizrProto._domPrefixes = domPrefixes;
-  
-
-module.exports = domPrefixes;
 },{"./ModernizrProto":14,"./omPrefixes":29}],26:[function(require,module,exports){
 var contains = require('./contains');
 var mStyle = require('./mStyle');
@@ -5792,7 +5804,17 @@ var createElement = require('./createElement');
   
 
 module.exports = testProps;
-},{"./contains":30,"./mStyle":31,"./createElement":9}],28:[function(require,module,exports){
+},{"./contains":30,"./mStyle":31,"./createElement":10}],27:[function(require,module,exports){
+var ModernizrProto = require('./ModernizrProto');
+var omPrefixes = require('./omPrefixes');
+
+
+  var domPrefixes = omPrefixes.toLowerCase().split(' ');
+  ModernizrProto._domPrefixes = domPrefixes;
+  
+
+module.exports = domPrefixes;
+},{"./ModernizrProto":14,"./omPrefixes":29}],28:[function(require,module,exports){
 var is = require('./is');
 require('./fnBind');
 
@@ -5874,7 +5896,7 @@ var modElem = require('./modElem');
   
 
 module.exports = mStyle;
-},{"./Modernizr":8,"./modElem":32}],32:[function(require,module,exports){
+},{"./Modernizr":9,"./modElem":32}],32:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var createElement = require('./createElement');
 
@@ -5894,5 +5916,5 @@ var createElement = require('./createElement');
   
 
 module.exports = modElem;
-},{"./Modernizr":8,"./createElement":9}]},{},[3])
+},{"./Modernizr":9,"./createElement":10}]},{},[3])
 ;
