@@ -3,7 +3,7 @@
 URL="https://github.com/jnordberg/gif.js"
 TMP="./dist/tmp"
 
-if [ -f ./node_modules/.bin/browserify ]; then
+if [ -f ./node_modules/.bin/cjsify ]; then
   VERSION=`./bin/version`
   echo "Packaging gif.js $VERSION"
   ./node_modules/.bin/cjsify \
