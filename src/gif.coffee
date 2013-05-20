@@ -100,7 +100,7 @@ class GIF extends EventEmitter
     image = new Blob [data],
       type: 'image/gif'
 
-    @emit 'finished', image
+    @emit 'finished', image, data
 
   renderNextFrame: ->
     if @freeWorkers.length is 0
