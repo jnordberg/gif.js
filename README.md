@@ -3,9 +3,9 @@
 
 Full-featured JavaScript GIF encoder that runs in your browser.
 
-**Demo** - http://jnordberg.github.io/gif.js/
+Uses typed arrays and web workers to render each frame in the background, it's really fast!
 
-Uses web workers and typed arrays to achieve
+**Demo** - http://jnordberg.github.io/gif.js/
 
 ## Usage
 
@@ -44,6 +44,13 @@ To set the size of the put image you can use `setSize` if not set it will be det
 first frame added.
 
 There are also a few undocumented options, check the source.
+
+## Wishlist
+
+If you want to contribute, here's some stuff that would be nice to have.
+
+ * Tests
+ * Fallbacks and polyfills for ~~crappy~~differently abled browsers.
 
 ## License
 
