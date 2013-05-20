@@ -7,6 +7,7 @@ require './vendor/mootools.js'
 async = require 'async'
 ready = require './vendor/ready.js'
 
+_URL = URL or webkitURL
 now = window.performance?.now?.bind(window.performance) or Date.now
 
 loadImage = (src, callback) ->
@@ -36,7 +37,7 @@ setupDemo = (element) ->
     startTime = now()
 
   gif.on 'finished', (blob) ->
-    renderimg.src = URL.createObjectURL(blob)
+    renderimg.src = _URL.createObjectURL(blob)
     delta = now() - startTime
     logel.set 'text', "Rendered #{ images.length } frame(s) at q#{ gif.options.quality } in #{ delta.toFixed(2) }ms"
 
