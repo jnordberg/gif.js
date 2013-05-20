@@ -1,0 +1,172 @@
+
+@import 'vendor/reset';
+@import 'vendor/elements';
+
+@background: #d4d4d4;
+@text: #131313;
+
+html, body {
+
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 21px;
+  color: @text;
+  margin: 0;
+  .gradient(@background, @background, lighten(@background, 20%));
+}
+
+h1 {
+  font-size: 2.6em;
+  margin-bottom: 0.5em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+h2 {
+  font-size: 1.6em;
+  margin-bottom: 0.8em;
+  margin-top: 1.2em;
+}
+
+header {
+  padding-top: 1em;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.8em;
+  padding: 1em;
+  font-style: italic;
+}
+
+header, footer, .wrap {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.demo, .demo pre {
+  font-family: Menlo, monospace;
+  font-size: 18px;
+}
+
+.demo {
+  position: relative;
+  background: #fff;
+  width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2em;
+  .hover-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    li {
+      font-size: 14px;
+      opacity: 0.6;
+      background: #000;
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      float: left;
+      padding: 10px 12px 9px;
+      border-bottom-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      margin-right: 10px;
+      cursor: default;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  .images {
+    height: 392px;
+    img {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 600px;
+      height: 392px;
+      &.render {
+        display: block;
+        background: #fff url(../images/loading.gif) no-repeat center center;
+      }
+    }
+  }
+
+  &.original .images img.original {
+    display: block;
+  }
+  &.reference .images img.reference {
+    display: block;
+  }
+
+  .controls {
+    padding: 10px;
+    p {
+      line-height: 1.3;
+      margin: 0;
+    }
+    label {
+      display: inline-block;
+      min-width: 80px;
+    }
+    pre {
+      margin-top: 10px;
+    }
+
+  }
+}
+
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+.tomorrow-comment, pre .comment, pre .title {
+  color: #8e908c;
+}
+
+.tomorrow-red, pre .variable, pre .attribute, pre .tag, pre .regexp, pre .ruby .constant, pre .xml .tag .title, pre .xml .pi, pre .xml .doctype, pre .html .doctype, pre .css .id, pre .css .class, pre .css .pseudo {
+  color: #c82829;
+}
+
+.tomorrow-orange, pre .number, pre .preprocessor, pre .built_in, pre .literal, pre .params, pre .constant {
+  color: #f5871f;
+}
+
+.tomorrow-yellow, pre .ruby .class .title, pre .css .rules .attribute {
+  color: #eab700;
+}
+
+.tomorrow-green, pre .string, pre .value, pre .inheritance, pre .header, pre .ruby .symbol, pre .xml .cdata {
+  color: #718c00;
+}
+
+.tomorrow-aqua, pre .css .hexcolor {
+  color: #3e999f;
+}
+
+.tomorrow-blue, pre .function, pre .python .decorator, pre .python .title, pre .ruby .function .title, pre .ruby .title .keyword, pre .perl .sub, pre .javascript .title, pre .coffeescript .title {
+  color: #4271ae;
+}
+
+.tomorrow-purple, pre .keyword, pre .javascript .function {
+  color: #8959a8;
+}
+
+pre code {
+  display: block;
+  background: white;
+  color: #4d4d4c;
+  padding: 0.5em;
+}
+
+pre .coffeescript .javascript,
+pre .javascript .xml,
+pre .tex .formula,
+pre .xml .javascript,
+pre .xml .vbscript,
+pre .xml .css,
+pre .xml .cdata {
+  opacity: 0.5;
+}

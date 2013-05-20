@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "dependencies": {
+    "wintersmith-browserify": "*",
+    "wintersmith-less": "*",
+    "wintersmith-nunjucks": "*",
+    "browsernizr": "*",
+    "async": "~0.2.8"
+  }
+}

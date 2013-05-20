@@ -1,0 +1,1 @@
+./../../dist/gif.worker.js
