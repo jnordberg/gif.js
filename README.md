@@ -7,6 +7,16 @@ Uses typed arrays and web workers to render each frame in the background, it's r
 
 **Demo** - http://jnordberg.github.io/gif.js/
 
+Tested in
+
+  * Google Chrome
+  * Firefox 17+
+  * Safari 6+
+  * Internet Explorer 10+
+  * Mobile Safari iOS 6
+
+Should work in browsers supporting: [Web Workers](http://www.w3.org/TR/workers/), [File API](http://www.w3.org/TR/FileAPI/) and [Typed Arrays](https://www.khronos.org/registry/typedarray/specs/latest/)
+
 ## Usage
 
 Include `gif.js` found in `dist/` in your page. Also make sure to have `gif.worker.js` in the same location.
@@ -50,7 +60,7 @@ There are also a few undocumented options, check the source.
 If you want to contribute, here's some stuff that would be nice to have.
 
  * Tests
- * Fallbacks and polyfills for ~~crappy~~differently abled browsers.
+ * Fallbacks and polyfills for old browsers
 
 ## License
 
