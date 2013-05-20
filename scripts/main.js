@@ -1,60 +1,4 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-/*!
-  * domready (c) Dustin Diaz 2012 - License MIT
-  */
-!function (name, context, definition) {
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else context[name] = definition()
-}('domready', this, function (ready) {
-
-  var fns = [], fn, f = false
-    , doc = document
-    , testEl = doc.documentElement
-    , hack = testEl.doScroll
-    , domContentLoaded = 'DOMContentLoaded'
-    , addEventListener = 'addEventListener'
-    , onreadystatechange = 'onreadystatechange'
-    , readyState = 'readyState'
-    , loaded = /^loade|c/.test(doc[readyState])
-
-  function flush(f) {
-    loaded = 1
-    while (f = fns.shift()) f()
-  }
-
-  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
-    doc.removeEventListener(domContentLoaded, fn, f)
-    flush()
-  }, f)
-
-
-  hack && doc.attachEvent(onreadystatechange, fn = function () {
-    if (/^c/.test(doc[readyState])) {
-      doc.detachEvent(onreadystatechange, fn)
-      flush()
-    }
-  })
-
-  return (ready = hack ?
-    function (fn) {
-      self != top ?
-        loaded ? fn() : fns.push(fn) :
-        function () {
-          try {
-            testEl.doScroll('left')
-          } catch (e) {
-            return setTimeout(function() { ready(fn) }, 50)
-          }
-          fn()
-        }()
-    } :
-    function (fn) {
-      loaded ? fn() : fns.push(fn)
-    })
-})
-
-},{}],2:[function(require,module,exports){
 (function(){
 
 this.MooTools = {
@@ -4116,6 +4060,62 @@ Element.alias({position: 'setPosition'}); //compatability
 
 });
 
+},{}],2:[function(require,module,exports){
+/*!
+  * domready (c) Dustin Diaz 2012 - License MIT
+  */
+!function (name, context, definition) {
+  if (typeof module != 'undefined') module.exports = definition()
+  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+  else context[name] = definition()
+}('domready', this, function (ready) {
+
+  var fns = [], fn, f = false
+    , doc = document
+    , testEl = doc.documentElement
+    , hack = testEl.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , addEventListener = 'addEventListener'
+    , onreadystatechange = 'onreadystatechange'
+    , readyState = 'readyState'
+    , loaded = /^loade|c/.test(doc[readyState])
+
+  function flush(f) {
+    loaded = 1
+    while (f = fns.shift()) f()
+  }
+
+  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+    doc.removeEventListener(domContentLoaded, fn, f)
+    flush()
+  }, f)
+
+
+  hack && doc.attachEvent(onreadystatechange, fn = function () {
+    if (/^c/.test(doc[readyState])) {
+      doc.detachEvent(onreadystatechange, fn)
+      flush()
+    }
+  })
+
+  return (ready = hack ?
+    function (fn) {
+      self != top ?
+        loaded ? fn() : fns.push(fn) :
+        function () {
+          try {
+            testEl.doScroll('left')
+          } catch (e) {
+            return setTimeout(function() { ready(fn) }, 50)
+          }
+          fn()
+        }()
+    } :
+    function (fn) {
+      loaded ? fn() : fns.push(fn)
+    })
+})
+
 },{}],3:[function(require,module,exports){
 (function() {
   var Modernizr, async, loadImage, now, ready, setupDemo, _URL, _ref, _ref1;
@@ -4132,7 +4132,7 @@ Element.alias({position: 'setPosition'}); //compatability
 
   ready = require('./vendor/ready.js');
 
-  _URL = URL || webkitURL;
+  _URL = window.URL || window.webkitURL;
 
   now = ((_ref = window.performance) != null ? (_ref1 = _ref.now) != null ? _ref1.bind(window.performance) : void 0 : void 0) || Date.now;
 
@@ -4267,7 +4267,7 @@ Element.alias({position: 'setPosition'}); //compatability
 }).call(this);
 
 
-},{"./vendor/mootools.js":2,"./vendor/ready.js":1,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],4:[function(require,module,exports){
+},{"./vendor/mootools.js":1,"./vendor/ready.js":2,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],4:[function(require,module,exports){
 var Modernizr = require('./../../lib/Modernizr');
 var createElement = require('./../../lib/createElement');
 
@@ -4310,7 +4310,7 @@ var docElement = require('./../../lib/docElement');
   });
 
 
-},{"./../../lib/Modernizr":8,"./../../lib/testAllProps":10,"./../../lib/testStyles":11,"./../../lib/docElement":12}],13:[function(require,module,exports){
+},{"./../../lib/Modernizr":8,"./../../lib/testAllProps":10,"./../../lib/docElement":11,"./../../lib/testStyles":12}],13:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5319,7 +5319,7 @@ process.chdir = function (dir) {
 }());
 
 })(require("__browserify_process"))
-},{"__browserify_process":13}],12:[function(require,module,exports){
+},{"__browserify_process":13}],11:[function(require,module,exports){
 
   var docElement = document.documentElement;
   
@@ -5347,7 +5347,7 @@ for (var i = 0; i < Modernizr._q.length; i++) {
 
 module.exports = Modernizr;
 
-},{"./lib/Modernizr":8,"./lib/ModernizrProto":14,"./lib/testRunner":15,"./lib/classes":16,"./lib/setClasses":17}],16:[function(require,module,exports){
+},{"./lib/Modernizr":8,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],15:[function(require,module,exports){
 
   var classes = [];
   
@@ -5378,16 +5378,7 @@ require('./fnBind');
   
 
 module.exports = createElement;
-},{"./fnBind":18}],10:[function(require,module,exports){
-var ModernizrProto = require('./ModernizrProto');
-var testPropsAll = require('./testPropsAll');
-
-
-  var testAllProps = ModernizrProto.testAllProps = testPropsAll;
-  
-
-module.exports = testAllProps;
-},{"./testPropsAll":19,"./ModernizrProto":14}],11:[function(require,module,exports){
+},{"./fnBind":18}],12:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5396,7 +5387,45 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":20}],15:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":19}],10:[function(require,module,exports){
+var ModernizrProto = require('./ModernizrProto');
+var testPropsAll = require('./testPropsAll');
+
+
+  var testAllProps = ModernizrProto.testAllProps = testPropsAll;
+  
+
+module.exports = testAllProps;
+},{"./ModernizrProto":14,"./testPropsAll":20}],14:[function(require,module,exports){
+var tests = require('./tests');
+
+
+  var ModernizrProto = {
+    // The current version, dummy
+    _version : 'v3.0.0pre',
+
+    // Any settings that don't work as separate modules
+    // can go in here as configuration.
+    _config : {
+      classPrefix : '',
+      enableClasses : true
+    },
+
+    _q : [],
+
+    addTest : function( name, fn, options ) {
+      tests.push({name : name, fn : fn, options : options });
+    },
+
+    addAsyncTest : function (fn) {
+      tests.push({name : null, fn : fn});
+    }
+  };
+
+  
+
+module.exports = ModernizrProto;
+},{"./tests":21}],16:[function(require,module,exports){
 var tests = require('./tests');
 var Modernizr = require('./Modernizr');
 var classes = require('./classes');
@@ -5445,7 +5474,7 @@ var is = require('./is');
   
 
 module.exports = testRunner;
-},{"./tests":21,"./Modernizr":8,"./classes":16,"./is":22}],17:[function(require,module,exports){
+},{"./tests":21,"./Modernizr":8,"./classes":15,"./is":22}],17:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var docElement = require('./docElement');
 
@@ -5485,36 +5514,7 @@ var docElement = require('./docElement');
   
 
 module.exports = setClasses;
-},{"./Modernizr":8,"./docElement":12}],14:[function(require,module,exports){
-var tests = require('./tests');
-
-
-  var ModernizrProto = {
-    // The current version, dummy
-    _version : 'v3.0.0pre',
-
-    // Any settings that don't work as separate modules
-    // can go in here as configuration.
-    _config : {
-      classPrefix : '',
-      enableClasses : true
-    },
-
-    _q : [],
-
-    addTest : function( name, fn, options ) {
-      tests.push({name : name, fn : fn, options : options });
-    },
-
-    addAsyncTest : function (fn) {
-      tests.push({name : null, fn : fn});
-    }
-  };
-
-  
-
-module.exports = ModernizrProto;
-},{"./tests":21}],21:[function(require,module,exports){
+},{"./Modernizr":8,"./docElement":11}],21:[function(require,module,exports){
 
   var tests = [];
   
@@ -5583,46 +5583,6 @@ var slice = require('./slice');
 module.exports = Function.prototype.bind;
 },{"./slice":23}],19:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
-var cssomPrefixes = require('./cssomPrefixes');
-var is = require('./is');
-var testProps = require('./testProps');
-var domPrefixes = require('./domPrefixes');
-var testDOMProps = require('./testDOMProps');
-
-
-  /**
-   * testPropsAll tests a list of DOM properties we want to check against.
-   *   We specify literally ALL possible (known and/or likely) properties on
-   *   the element including the non-vendor prefixed one, for forward-
-   *   compatibility.
-   */
-  function testPropsAll( prop, prefixed, elem ) {
-
-    var ucProp  = prop.charAt(0).toUpperCase() + prop.slice(1),
-    props   = (prop + ' ' + cssomPrefixes.join(ucProp + ' ') + ucProp).split(' ');
-
-    // did they call .prefixed('boxSizing') or are we just testing a prop?
-    if(is(prefixed, "string") || is(prefixed, "undefined")) {
-      return testProps(props, prefixed);
-
-      // otherwise, they called .prefixed('requestAnimationFrame', window[, elem])
-    } else {
-      props = (prop + ' ' + (domPrefixes).join(ucProp + ' ') + ucProp).split(' ');
-      return testDOMProps(props, prefixed, elem);
-    }
-  }
-
-  // Modernizr.testAllProps() investigates whether a given style property,
-  //   or any of its vendor-prefixed variants, is recognized
-  // Note that the property names must be provided in the camelCase variant.
-  // Modernizr.testAllProps('boxSizing')
-  ModernizrProto.testAllProps = testPropsAll;
-
-  
-
-module.exports = testPropsAll;
-},{"./ModernizrProto":14,"./cssomPrefixes":24,"./is":22,"./testProps":25,"./domPrefixes":26,"./testDOMProps":27}],20:[function(require,module,exports){
-var ModernizrProto = require('./ModernizrProto');
 var docElement = require('./docElement');
 var createElement = require('./createElement');
 var getBody = require('./getBody');
@@ -5685,7 +5645,47 @@ var getBody = require('./getBody');
   
 
 module.exports = injectElementWithStyles;
-},{"./ModernizrProto":14,"./docElement":12,"./createElement":9,"./getBody":28}],23:[function(require,module,exports){
+},{"./ModernizrProto":14,"./docElement":11,"./getBody":24,"./createElement":9}],20:[function(require,module,exports){
+var ModernizrProto = require('./ModernizrProto');
+var cssomPrefixes = require('./cssomPrefixes');
+var is = require('./is');
+var testProps = require('./testProps');
+var domPrefixes = require('./domPrefixes');
+var testDOMProps = require('./testDOMProps');
+
+
+  /**
+   * testPropsAll tests a list of DOM properties we want to check against.
+   *   We specify literally ALL possible (known and/or likely) properties on
+   *   the element including the non-vendor prefixed one, for forward-
+   *   compatibility.
+   */
+  function testPropsAll( prop, prefixed, elem ) {
+
+    var ucProp  = prop.charAt(0).toUpperCase() + prop.slice(1),
+    props   = (prop + ' ' + cssomPrefixes.join(ucProp + ' ') + ucProp).split(' ');
+
+    // did they call .prefixed('boxSizing') or are we just testing a prop?
+    if(is(prefixed, "string") || is(prefixed, "undefined")) {
+      return testProps(props, prefixed);
+
+      // otherwise, they called .prefixed('requestAnimationFrame', window[, elem])
+    } else {
+      props = (prop + ' ' + (domPrefixes).join(ucProp + ' ') + ucProp).split(' ');
+      return testDOMProps(props, prefixed, elem);
+    }
+  }
+
+  // Modernizr.testAllProps() investigates whether a given style property,
+  //   or any of its vendor-prefixed variants, is recognized
+  // Note that the property names must be provided in the camelCase variant.
+  // Modernizr.testAllProps('boxSizing')
+  ModernizrProto.testAllProps = testPropsAll;
+
+  
+
+module.exports = testPropsAll;
+},{"./ModernizrProto":14,"./cssomPrefixes":25,"./is":22,"./testProps":26,"./domPrefixes":27,"./testDOMProps":28}],23:[function(require,module,exports){
 var classes = require('./classes');
 
 
@@ -5693,7 +5693,27 @@ var classes = require('./classes');
   
 
 module.exports = slice;
-},{"./classes":16}],24:[function(require,module,exports){
+},{"./classes":15}],24:[function(require,module,exports){
+var createElement = require('./createElement');
+
+
+  function getBody() {
+    // After page load injecting a fake body doesn't work so check if body exists
+    var body = document.body;
+
+    if(!body) {
+      // Can't use the real body create a fake one.
+      body = createElement('body');
+      body.fake = true;
+    }
+
+    return body;
+  }
+
+  
+
+module.exports = getBody;
+},{"./createElement":9}],25:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 
@@ -5703,7 +5723,17 @@ var omPrefixes = require('./omPrefixes');
   
 
 module.exports = cssomPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],25:[function(require,module,exports){
+},{"./ModernizrProto":14,"./omPrefixes":29}],27:[function(require,module,exports){
+var ModernizrProto = require('./ModernizrProto');
+var omPrefixes = require('./omPrefixes');
+
+
+  var domPrefixes = omPrefixes.toLowerCase().split(' ');
+  ModernizrProto._domPrefixes = domPrefixes;
+  
+
+module.exports = domPrefixes;
+},{"./ModernizrProto":14,"./omPrefixes":29}],26:[function(require,module,exports){
 var contains = require('./contains');
 var mStyle = require('./mStyle');
 var createElement = require('./createElement');
@@ -5762,7 +5792,7 @@ var createElement = require('./createElement');
   
 
 module.exports = testProps;
-},{"./contains":30,"./mStyle":31,"./createElement":9}],27:[function(require,module,exports){
+},{"./contains":30,"./mStyle":31,"./createElement":9}],28:[function(require,module,exports){
 var is = require('./is');
 require('./fnBind');
 
@@ -5799,37 +5829,7 @@ require('./fnBind');
   
 
 module.exports = testDOMProps;
-},{"./is":22,"./fnBind":18}],26:[function(require,module,exports){
-var ModernizrProto = require('./ModernizrProto');
-var omPrefixes = require('./omPrefixes');
-
-
-  var domPrefixes = omPrefixes.toLowerCase().split(' ');
-  ModernizrProto._domPrefixes = domPrefixes;
-  
-
-module.exports = domPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],28:[function(require,module,exports){
-var createElement = require('./createElement');
-
-
-  function getBody() {
-    // After page load injecting a fake body doesn't work so check if body exists
-    var body = document.body;
-
-    if(!body) {
-      // Can't use the real body create a fake one.
-      body = createElement('body');
-      body.fake = true;
-    }
-
-    return body;
-  }
-
-  
-
-module.exports = getBody;
-},{"./createElement":9}],29:[function(require,module,exports){
+},{"./is":22,"./fnBind":18}],29:[function(require,module,exports){
 
   // Following spec is to expose vendor-specific style properties as:
   //   elem.style.WebkitBorderRadius
@@ -5894,5 +5894,5 @@ var createElement = require('./createElement');
   
 
 module.exports = modElem;
-},{"./createElement":9,"./Modernizr":8}]},{},[3])
+},{"./Modernizr":8,"./createElement":9}]},{},[3])
 ;
