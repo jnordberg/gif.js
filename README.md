@@ -1,7 +1,7 @@
 
 # gif.js
 
-Full-featured JavaScript GIF encoder that runs in your browser.
+JavaScript GIF encoder that runs in your browser.
 
 Uses typed arrays and web workers to render each frame in the background, it's really fast!
 
@@ -60,6 +60,14 @@ If you want to contribute, here's some stuff that would be nice to have.
 
  * Tests
  * Fallbacks and polyfills for old browsers
+
+## Acknowledgements
+
+gif.js is based on:
+
+ * [Kevin Weiner's Animated gif encoder classes](http://www.fmsware.com/stuff/gif.html)
+ * [Neural-Net color quantization algorithm by Anthony Dekker](http://members.ozemail.com.au/~dekker/NEUQUANT.HTML)
+ * [Thibault Imbert's as3gif](https://code.google.com/p/as3gif/)
 
 ## License
 
