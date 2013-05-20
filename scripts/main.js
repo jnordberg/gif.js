@@ -1,4 +1,60 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+/*!
+  * domready (c) Dustin Diaz 2012 - License MIT
+  */
+!function (name, context, definition) {
+  if (typeof module != 'undefined') module.exports = definition()
+  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+  else context[name] = definition()
+}('domready', this, function (ready) {
+
+  var fns = [], fn, f = false
+    , doc = document
+    , testEl = doc.documentElement
+    , hack = testEl.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , addEventListener = 'addEventListener'
+    , onreadystatechange = 'onreadystatechange'
+    , readyState = 'readyState'
+    , loaded = /^loade|c/.test(doc[readyState])
+
+  function flush(f) {
+    loaded = 1
+    while (f = fns.shift()) f()
+  }
+
+  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+    doc.removeEventListener(domContentLoaded, fn, f)
+    flush()
+  }, f)
+
+
+  hack && doc.attachEvent(onreadystatechange, fn = function () {
+    if (/^c/.test(doc[readyState])) {
+      doc.detachEvent(onreadystatechange, fn)
+      flush()
+    }
+  })
+
+  return (ready = hack ?
+    function (fn) {
+      self != top ?
+        loaded ? fn() : fns.push(fn) :
+        function () {
+          try {
+            testEl.doScroll('left')
+          } catch (e) {
+            return setTimeout(function() { ready(fn) }, 50)
+          }
+          fn()
+        }()
+    } :
+    function (fn) {
+      loaded ? fn() : fns.push(fn)
+    })
+})
+
+},{}],2:[function(require,module,exports){
 (function(){
 
 this.MooTools = {
@@ -4060,65 +4116,9 @@ Element.alias({position: 'setPosition'}); //compatability
 
 });
 
-},{}],2:[function(require,module,exports){
-/*!
-  * domready (c) Dustin Diaz 2012 - License MIT
-  */
-!function (name, context, definition) {
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else context[name] = definition()
-}('domready', this, function (ready) {
-
-  var fns = [], fn, f = false
-    , doc = document
-    , testEl = doc.documentElement
-    , hack = testEl.doScroll
-    , domContentLoaded = 'DOMContentLoaded'
-    , addEventListener = 'addEventListener'
-    , onreadystatechange = 'onreadystatechange'
-    , readyState = 'readyState'
-    , loaded = /^loade|c/.test(doc[readyState])
-
-  function flush(f) {
-    loaded = 1
-    while (f = fns.shift()) f()
-  }
-
-  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
-    doc.removeEventListener(domContentLoaded, fn, f)
-    flush()
-  }, f)
-
-
-  hack && doc.attachEvent(onreadystatechange, fn = function () {
-    if (/^c/.test(doc[readyState])) {
-      doc.detachEvent(onreadystatechange, fn)
-      flush()
-    }
-  })
-
-  return (ready = hack ?
-    function (fn) {
-      self != top ?
-        loaded ? fn() : fns.push(fn) :
-        function () {
-          try {
-            testEl.doScroll('left')
-          } catch (e) {
-            return setTimeout(function() { ready(fn) }, 50)
-          }
-          fn()
-        }()
-    } :
-    function (fn) {
-      loaded ? fn() : fns.push(fn)
-    })
-})
-
 },{}],3:[function(require,module,exports){
 (function() {
-  var Modernizr, async, loadImage, now, ready, setupDemo, _ref, _ref1;
+  var Modernizr, async, loadImage, now, ready, setupDemo, _URL, _ref, _ref1;
 
   require('browsernizr/test/css/rgba');
 
@@ -4131,6 +4131,8 @@ Element.alias({position: 'setPosition'}); //compatability
   async = require('async');
 
   ready = require('./vendor/ready.js');
+
+  _URL = URL || webkitURL;
 
   now = ((_ref = window.performance) != null ? (_ref1 = _ref.now) != null ? _ref1.bind(window.performance) : void 0 : void 0) || Date.now;
 
@@ -4173,7 +4175,7 @@ Element.alias({position: 'setPosition'}); //compatability
     gif.on('finished', function(blob) {
       var delta;
 
-      renderimg.src = URL.createObjectURL(blob);
+      renderimg.src = _URL.createObjectURL(blob);
       delta = now() - startTime;
       return logel.set('text', "Rendered " + images.length + " frame(s) at q" + gif.options.quality + " in " + (delta.toFixed(2)) + "ms");
     });
@@ -4265,7 +4267,50 @@ Element.alias({position: 'setPosition'}); //compatability
 }).call(this);
 
 
-},{"./vendor/mootools.js":1,"./vendor/ready.js":2,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],8:[function(require,module,exports){
+},{"./vendor/mootools.js":2,"./vendor/ready.js":1,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],4:[function(require,module,exports){
+var Modernizr = require('./../../lib/Modernizr');
+var createElement = require('./../../lib/createElement');
+
+
+  // css-tricks.com/rgba-browser-support/
+
+  Modernizr.addTest('rgba', function() {
+    var elem = createElement('div');
+    var style = elem.style;
+    style.cssText = 'background-color:rgba(150,255,150,.5)';
+
+    return ('' + style.backgroundColor).indexOf('rgba') > -1;
+  });
+
+
+},{"./../../lib/Modernizr":8,"./../../lib/createElement":9}],5:[function(require,module,exports){
+var Modernizr = require('./../../lib/Modernizr');
+var testAllProps = require('./../../lib/testAllProps');
+var testStyles = require('./../../lib/testStyles');
+var docElement = require('./../../lib/docElement');
+
+
+  Modernizr.addTest('csstransforms3d', function() {
+    var ret = !!testAllProps('perspective');
+
+    // Webkit's 3D transforms are passed off to the browser's own graphics renderer.
+    //   It works fine in Safari on Leopard and Snow Leopard, but not in Chrome in
+    //   some conditions. As a result, Webkit typically recognizes the syntax but
+    //   will sometimes throw a false positive, thus we must do a more thorough check:
+    if ( ret && 'webkitPerspective' in docElement.style ) {
+
+      // Webkit allows this media query to succeed only if the feature is enabled.
+      // `@media (transform-3d),(-webkit-transform-3d){ ... }`
+      // If loaded inside the body tag and the test element inherits any padding, margin or borders it will fail #740
+      testStyles('@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0}}', function( node, rule ) {
+        ret = node.offsetLeft === 9 && node.offsetHeight === 5;
+      });
+    }
+    return ret;
+  });
+
+
+},{"./../../lib/Modernizr":8,"./../../lib/testAllProps":10,"./../../lib/testStyles":11,"./../../lib/docElement":12}],13:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5274,50 +5319,7 @@ process.chdir = function (dir) {
 }());
 
 })(require("__browserify_process"))
-},{"__browserify_process":8}],4:[function(require,module,exports){
-var Modernizr = require('./../../lib/Modernizr');
-var createElement = require('./../../lib/createElement');
-
-
-  // css-tricks.com/rgba-browser-support/
-
-  Modernizr.addTest('rgba', function() {
-    var elem = createElement('div');
-    var style = elem.style;
-    style.cssText = 'background-color:rgba(150,255,150,.5)';
-
-    return ('' + style.backgroundColor).indexOf('rgba') > -1;
-  });
-
-
-},{"./../../lib/Modernizr":9,"./../../lib/createElement":10}],5:[function(require,module,exports){
-var Modernizr = require('./../../lib/Modernizr');
-var testAllProps = require('./../../lib/testAllProps');
-var testStyles = require('./../../lib/testStyles');
-var docElement = require('./../../lib/docElement');
-
-
-  Modernizr.addTest('csstransforms3d', function() {
-    var ret = !!testAllProps('perspective');
-
-    // Webkit's 3D transforms are passed off to the browser's own graphics renderer.
-    //   It works fine in Safari on Leopard and Snow Leopard, but not in Chrome in
-    //   some conditions. As a result, Webkit typically recognizes the syntax but
-    //   will sometimes throw a false positive, thus we must do a more thorough check:
-    if ( ret && 'webkitPerspective' in docElement.style ) {
-
-      // Webkit allows this media query to succeed only if the feature is enabled.
-      // `@media (transform-3d),(-webkit-transform-3d){ ... }`
-      // If loaded inside the body tag and the test element inherits any padding, margin or borders it will fail #740
-      testStyles('@media (transform-3d),(-webkit-transform-3d){#modernizr{left:9px;position:absolute;height:5px;margin:0;padding:0;border:0}}', function( node, rule ) {
-        ret = node.offsetLeft === 9 && node.offsetHeight === 5;
-      });
-    }
-    return ret;
-  });
-
-
-},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/testStyles":12,"./../../lib/docElement":13}],13:[function(require,module,exports){
+},{"__browserify_process":13}],12:[function(require,module,exports){
 
   var docElement = document.documentElement;
   
@@ -5345,12 +5347,12 @@ for (var i = 0; i < Modernizr._q.length; i++) {
 
 module.exports = Modernizr;
 
-},{"./lib/Modernizr":9,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],15:[function(require,module,exports){
+},{"./lib/Modernizr":8,"./lib/ModernizrProto":14,"./lib/testRunner":15,"./lib/classes":16,"./lib/setClasses":17}],16:[function(require,module,exports){
 
   var classes = [];
   
 module.exports = classes;
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 
 
@@ -5368,7 +5370,7 @@ var ModernizrProto = require('./ModernizrProto');
   
 
 module.exports = Modernizr;
-},{"./ModernizrProto":14}],10:[function(require,module,exports){
+},{"./ModernizrProto":14}],9:[function(require,module,exports){
 require('./fnBind');
 
 
@@ -5376,7 +5378,7 @@ require('./fnBind');
   
 
 module.exports = createElement;
-},{"./fnBind":18}],11:[function(require,module,exports){
+},{"./fnBind":18}],10:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var testPropsAll = require('./testPropsAll');
 
@@ -5385,7 +5387,7 @@ var testPropsAll = require('./testPropsAll');
   
 
 module.exports = testAllProps;
-},{"./ModernizrProto":14,"./testPropsAll":19}],12:[function(require,module,exports){
+},{"./testPropsAll":19,"./ModernizrProto":14}],11:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5394,36 +5396,7 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":20}],14:[function(require,module,exports){
-var tests = require('./tests');
-
-
-  var ModernizrProto = {
-    // The current version, dummy
-    _version : 'v3.0.0pre',
-
-    // Any settings that don't work as separate modules
-    // can go in here as configuration.
-    _config : {
-      classPrefix : '',
-      enableClasses : true
-    },
-
-    _q : [],
-
-    addTest : function( name, fn, options ) {
-      tests.push({name : name, fn : fn, options : options });
-    },
-
-    addAsyncTest : function (fn) {
-      tests.push({name : null, fn : fn});
-    }
-  };
-
-  
-
-module.exports = ModernizrProto;
-},{"./tests":21}],16:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":20}],15:[function(require,module,exports){
 var tests = require('./tests');
 var Modernizr = require('./Modernizr');
 var classes = require('./classes');
@@ -5472,7 +5445,7 @@ var is = require('./is');
   
 
 module.exports = testRunner;
-},{"./tests":21,"./classes":15,"./Modernizr":9,"./is":22}],17:[function(require,module,exports){
+},{"./tests":21,"./Modernizr":8,"./classes":16,"./is":22}],17:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var docElement = require('./docElement');
 
@@ -5512,7 +5485,36 @@ var docElement = require('./docElement');
   
 
 module.exports = setClasses;
-},{"./docElement":13,"./Modernizr":9}],21:[function(require,module,exports){
+},{"./Modernizr":8,"./docElement":12}],14:[function(require,module,exports){
+var tests = require('./tests');
+
+
+  var ModernizrProto = {
+    // The current version, dummy
+    _version : 'v3.0.0pre',
+
+    // Any settings that don't work as separate modules
+    // can go in here as configuration.
+    _config : {
+      classPrefix : '',
+      enableClasses : true
+    },
+
+    _q : [],
+
+    addTest : function( name, fn, options ) {
+      tests.push({name : name, fn : fn, options : options });
+    },
+
+    addAsyncTest : function (fn) {
+      tests.push({name : null, fn : fn});
+    }
+  };
+
+  
+
+module.exports = ModernizrProto;
+},{"./tests":21}],21:[function(require,module,exports){
 
   var tests = [];
   
@@ -5683,7 +5685,7 @@ var getBody = require('./getBody');
   
 
 module.exports = injectElementWithStyles;
-},{"./ModernizrProto":14,"./docElement":13,"./createElement":10,"./getBody":28}],23:[function(require,module,exports){
+},{"./ModernizrProto":14,"./docElement":12,"./createElement":9,"./getBody":28}],23:[function(require,module,exports){
 var classes = require('./classes');
 
 
@@ -5691,7 +5693,7 @@ var classes = require('./classes');
   
 
 module.exports = slice;
-},{"./classes":15}],24:[function(require,module,exports){
+},{"./classes":16}],24:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 
@@ -5760,17 +5762,7 @@ var createElement = require('./createElement');
   
 
 module.exports = testProps;
-},{"./mStyle":30,"./contains":31,"./createElement":10}],26:[function(require,module,exports){
-var ModernizrProto = require('./ModernizrProto');
-var omPrefixes = require('./omPrefixes');
-
-
-  var domPrefixes = omPrefixes.toLowerCase().split(' ');
-  ModernizrProto._domPrefixes = domPrefixes;
-  
-
-module.exports = domPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],27:[function(require,module,exports){
+},{"./contains":30,"./mStyle":31,"./createElement":9}],27:[function(require,module,exports){
 var is = require('./is');
 require('./fnBind');
 
@@ -5807,7 +5799,17 @@ require('./fnBind');
   
 
 module.exports = testDOMProps;
-},{"./is":22,"./fnBind":18}],28:[function(require,module,exports){
+},{"./is":22,"./fnBind":18}],26:[function(require,module,exports){
+var ModernizrProto = require('./ModernizrProto');
+var omPrefixes = require('./omPrefixes');
+
+
+  var domPrefixes = omPrefixes.toLowerCase().split(' ');
+  ModernizrProto._domPrefixes = domPrefixes;
+  
+
+module.exports = domPrefixes;
+},{"./ModernizrProto":14,"./omPrefixes":29}],28:[function(require,module,exports){
 var createElement = require('./createElement');
 
 
@@ -5827,7 +5829,7 @@ var createElement = require('./createElement');
   
 
 module.exports = getBody;
-},{"./createElement":10}],29:[function(require,module,exports){
+},{"./createElement":9}],29:[function(require,module,exports){
 
   // Following spec is to expose vendor-specific style properties as:
   //   elem.style.WebkitBorderRadius
@@ -5842,7 +5844,7 @@ module.exports = getBody;
   var omPrefixes = 'Webkit Moz O ms';
   
 module.exports = omPrefixes;
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 
   /**
    * contains returns a boolean for if substr is found within str.
@@ -5853,7 +5855,7 @@ module.exports = omPrefixes;
 
   
 module.exports = contains;
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var modElem = require('./modElem');
 
@@ -5872,7 +5874,7 @@ var modElem = require('./modElem');
   
 
 module.exports = mStyle;
-},{"./Modernizr":9,"./modElem":32}],32:[function(require,module,exports){
+},{"./Modernizr":8,"./modElem":32}],32:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var createElement = require('./createElement');
 
@@ -5892,5 +5894,5 @@ var createElement = require('./createElement');
   
 
 module.exports = modElem;
-},{"./Modernizr":9,"./createElement":10}]},{},[3])
+},{"./createElement":9,"./Modernizr":8}]},{},[3])
 ;
