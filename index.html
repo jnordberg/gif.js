@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>gif.js</title>
+  <meta name="description" content="Full featured GIF encoder library that runs in your browser.">
+  <meta name="keywords" content="gif, encoder, animation, browser, unicorn">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="gif.js">
+  <meta property="og:url" content="http://jnordberg.github.io/gif.js">
+  <meta property="og:description" content="Full featured GIF encoder library that runs in your browser.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="/styles/main.css">
+  
+  <script src="/gif.js"></script>
+  <script src="/scripts/main.js"></script>
+
+</head>
+<body>
+  <header>
+    <h1>gif.js</h1>
+    <p>Full featured GIF encoder library that runs in your browser.</p>
+    <p class="github"><a href="#github">Download &amp; Docs on GitHub</a></p>
+  </header>
+  <div class="wrap">
+    
+
+  <h2>Usage</h2>
+  <pre><code class="lang-javascript"><span class="keyword">var</span> gif = <span class="keyword">new</span> GIF({
+  workers: <span class="number">2</span>,
+  quality: <span class="number">10</span>
+});
+
+gif.addImage(imageElement);
+gif.addImage(canvasElement, <span class="number">200</span>);
+<span class="comment">// second argument is delay</span>
+
+gif.on(<span class="string">'finished'</span>, <span class="keyword">function</span>(blob) {
+  window.open(URL.createObjectURL(blob));
+});
+
+gif.render();</code></pre>
+
+
+  <h2>Demo</h2>
+
+  <p>
+    GIF images are generated in the background using web workers. Hover the original and reference
+    tabs to see respective image.
+  </p>
+
+  <p>
+    Reference images are rendered with photoshop cs6 using the perceptual setting with no dither.
+  </p>
+
+  <div class="demo">
+    <div class="images">
+      <img class="render">
+      <img class="original" src="images/test/anim1.jpg">
+      <img class="original" src="images/test/anim2.jpg">
+      <img class="original" src="images/test/anim3.jpg">
+      <img class="original" src="images/test/anim4.jpg">
+      <img class="reference" src="images/test/anim-ref.gif">
+    </div>
+    <ul class="hover-buttons">
+      <li class="original">Original</li>
+      <li class="reference">Reference</li>
+    </ul>
+    <div class="controls">
+      <p class="quality">
+        <label>Quality</label>
+        <input type="range" step="1" min="1" max="30" value="20">
+        <span class="value">10</span>
+      </p>
+      <p class="delay">
+        <label>Delay</label>
+        <input type="range" step="1" min="0" max="1000" value="500">
+        <span class="value">500ms</span>
+      </p>
+      <p class="repeat">
+        <label>Repeat</label>
+        <input type="range" step="1" min="0" max="21" value="21">
+        <span class="value">forever</span>
+      </p>
+      <p class="info">
+        <pre>Loading...</pre>
+      </p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="images">
+      <img class="render">
+      <img class="original" src="images/test/test1-orig.jpg">
+      <img class="reference" src="images/test/test1-ref.gif">
+    </div>
+    <ul class="hover-buttons">
+      <li class="original">Original</li>
+      <li class="reference">Reference</li>
+    </ul>
+    <div class="controls">
+      <p class="quality">
+        <label>Quality</label>
+        <input type="range" step="1" min="1" max="30" value="20">
+        <span class="value">10</span>
+      </p>
+      <p class="info">
+        <pre>Loading...</pre>
+      </p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="images">
+      <img class="render">
+      <img class="original" src="images/test/test3-orig.png">
+      <img class="reference" src="images/test/test3-ref.gif">
+    </div>
+    <ul class="hover-buttons">
+      <li class="original">Original</li>
+      <li class="reference">Reference</li>
+    </ul>
+    <div class="controls">
+      <p class="quality">
+        <label>Quality</label>
+        <input type="range" step="1" min="1" max="30" value="20">
+        <span class="value">10</span>
+      </p>
+      <p class="info">
+        <pre>Loading...</pre>
+      </p>
+    </div>
+  </div>
+
+  </div>
+  <footer>
+    <p>Free shit by <a href="http://johan-nordberg.com/">Johan Nordberg</a> – May 2013</p>
+  </footer>
+</body>
+</html>
