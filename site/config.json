@@ -5,6 +5,7 @@
     "description": "Full featured GIF encoder library that runs in your browser.",
     "keywords": "gif, encoder, animation, browser, unicorn"
   },
+  "baseUrl": "/gif.js",
   "plugins": [
     "wintersmith-browserify",
     "wintersmith-less",
