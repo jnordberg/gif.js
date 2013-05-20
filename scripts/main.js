@@ -1,60 +1,4 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-/*!
-  * domready (c) Dustin Diaz 2012 - License MIT
-  */
-!function (name, context, definition) {
-  if (typeof module != 'undefined') module.exports = definition()
-  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
-  else context[name] = definition()
-}('domready', this, function (ready) {
-
-  var fns = [], fn, f = false
-    , doc = document
-    , testEl = doc.documentElement
-    , hack = testEl.doScroll
-    , domContentLoaded = 'DOMContentLoaded'
-    , addEventListener = 'addEventListener'
-    , onreadystatechange = 'onreadystatechange'
-    , readyState = 'readyState'
-    , loaded = /^loade|c/.test(doc[readyState])
-
-  function flush(f) {
-    loaded = 1
-    while (f = fns.shift()) f()
-  }
-
-  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
-    doc.removeEventListener(domContentLoaded, fn, f)
-    flush()
-  }, f)
-
-
-  hack && doc.attachEvent(onreadystatechange, fn = function () {
-    if (/^c/.test(doc[readyState])) {
-      doc.detachEvent(onreadystatechange, fn)
-      flush()
-    }
-  })
-
-  return (ready = hack ?
-    function (fn) {
-      self != top ?
-        loaded ? fn() : fns.push(fn) :
-        function () {
-          try {
-            testEl.doScroll('left')
-          } catch (e) {
-            return setTimeout(function() { ready(fn) }, 50)
-          }
-          fn()
-        }()
-    } :
-    function (fn) {
-      loaded ? fn() : fns.push(fn)
-    })
-})
-
-},{}],2:[function(require,module,exports){
 (function(){
 
 this.MooTools = {
@@ -4116,6 +4060,62 @@ Element.alias({position: 'setPosition'}); //compatability
 
 });
 
+},{}],2:[function(require,module,exports){
+/*!
+  * domready (c) Dustin Diaz 2012 - License MIT
+  */
+!function (name, context, definition) {
+  if (typeof module != 'undefined') module.exports = definition()
+  else if (typeof define == 'function' && typeof define.amd == 'object') define(definition)
+  else context[name] = definition()
+}('domready', this, function (ready) {
+
+  var fns = [], fn, f = false
+    , doc = document
+    , testEl = doc.documentElement
+    , hack = testEl.doScroll
+    , domContentLoaded = 'DOMContentLoaded'
+    , addEventListener = 'addEventListener'
+    , onreadystatechange = 'onreadystatechange'
+    , readyState = 'readyState'
+    , loaded = /^loade|c/.test(doc[readyState])
+
+  function flush(f) {
+    loaded = 1
+    while (f = fns.shift()) f()
+  }
+
+  doc[addEventListener] && doc[addEventListener](domContentLoaded, fn = function () {
+    doc.removeEventListener(domContentLoaded, fn, f)
+    flush()
+  }, f)
+
+
+  hack && doc.attachEvent(onreadystatechange, fn = function () {
+    if (/^c/.test(doc[readyState])) {
+      doc.detachEvent(onreadystatechange, fn)
+      flush()
+    }
+  })
+
+  return (ready = hack ?
+    function (fn) {
+      self != top ?
+        loaded ? fn() : fns.push(fn) :
+        function () {
+          try {
+            testEl.doScroll('left')
+          } catch (e) {
+            return setTimeout(function() { ready(fn) }, 50)
+          }
+          fn()
+        }()
+    } :
+    function (fn) {
+      loaded ? fn() : fns.push(fn)
+    })
+})
+
 },{}],3:[function(require,module,exports){
 (function() {
   var Modernizr, async, loadImage, now, ready, setupDemo, _ref, _ref1;
@@ -4265,7 +4265,7 @@ Element.alias({position: 'setPosition'}); //compatability
 }).call(this);
 
 
-},{"./vendor/mootools.js":2,"./vendor/ready.js":1,"browsernizr/test/css/transforms3d":4,"browsernizr/test/css/rgba":5,"browsernizr":6,"async":7}],8:[function(require,module,exports){
+},{"./vendor/mootools.js":1,"./vendor/ready.js":2,"browsernizr/test/css/rgba":4,"browsernizr/test/css/transforms3d":5,"browsernizr":6,"async":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5276,6 +5276,22 @@ process.chdir = function (dir) {
 })(require("__browserify_process"))
 },{"__browserify_process":8}],4:[function(require,module,exports){
 var Modernizr = require('./../../lib/Modernizr');
+var createElement = require('./../../lib/createElement');
+
+
+  // css-tricks.com/rgba-browser-support/
+
+  Modernizr.addTest('rgba', function() {
+    var elem = createElement('div');
+    var style = elem.style;
+    style.cssText = 'background-color:rgba(150,255,150,.5)';
+
+    return ('' + style.backgroundColor).indexOf('rgba') > -1;
+  });
+
+
+},{"./../../lib/Modernizr":9,"./../../lib/createElement":10}],5:[function(require,module,exports){
+var Modernizr = require('./../../lib/Modernizr');
 var testAllProps = require('./../../lib/testAllProps');
 var testStyles = require('./../../lib/testStyles');
 var docElement = require('./../../lib/docElement');
@@ -5301,23 +5317,7 @@ var docElement = require('./../../lib/docElement');
   });
 
 
-},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":10,"./../../lib/testStyles":11,"./../../lib/docElement":12}],5:[function(require,module,exports){
-var Modernizr = require('./../../lib/Modernizr');
-var createElement = require('./../../lib/createElement');
-
-
-  // css-tricks.com/rgba-browser-support/
-
-  Modernizr.addTest('rgba', function() {
-    var elem = createElement('div');
-    var style = elem.style;
-    style.cssText = 'background-color:rgba(150,255,150,.5)';
-
-    return ('' + style.backgroundColor).indexOf('rgba') > -1;
-  });
-
-
-},{"./../../lib/createElement":13,"./../../lib/Modernizr":9}],12:[function(require,module,exports){
+},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/testStyles":12,"./../../lib/docElement":13}],13:[function(require,module,exports){
 
   var docElement = document.documentElement;
   
@@ -5369,6 +5369,14 @@ var ModernizrProto = require('./ModernizrProto');
 
 module.exports = Modernizr;
 },{"./ModernizrProto":14}],10:[function(require,module,exports){
+require('./fnBind');
+
+
+  var createElement = document.createElement.bind(document);
+  
+
+module.exports = createElement;
+},{"./fnBind":18}],11:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var testPropsAll = require('./testPropsAll');
 
@@ -5377,7 +5385,7 @@ var testPropsAll = require('./testPropsAll');
   
 
 module.exports = testAllProps;
-},{"./ModernizrProto":14,"./testPropsAll":18}],11:[function(require,module,exports){
+},{"./ModernizrProto":14,"./testPropsAll":19}],12:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5386,15 +5394,7 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":19}],13:[function(require,module,exports){
-require('./fnBind');
-
-
-  var createElement = document.createElement.bind(document);
-  
-
-module.exports = createElement;
-},{"./fnBind":20}],14:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":20}],14:[function(require,module,exports){
 var tests = require('./tests');
 
 
@@ -5472,7 +5472,7 @@ var is = require('./is');
   
 
 module.exports = testRunner;
-},{"./tests":21,"./Modernizr":9,"./classes":15,"./is":22}],17:[function(require,module,exports){
+},{"./tests":21,"./classes":15,"./Modernizr":9,"./is":22}],17:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var docElement = require('./docElement');
 
@@ -5512,7 +5512,7 @@ var docElement = require('./docElement');
   
 
 module.exports = setClasses;
-},{"./Modernizr":9,"./docElement":12}],21:[function(require,module,exports){
+},{"./docElement":13,"./Modernizr":9}],21:[function(require,module,exports){
 
   var tests = [];
   
@@ -5528,6 +5528,58 @@ module.exports = tests;
   
 module.exports = is;
 },{}],18:[function(require,module,exports){
+var slice = require('./slice');
+
+
+  // Adapted from ES5-shim https://github.com/kriskowal/es5-shim/blob/master/es5-shim.js
+  // es5.github.com/#x15.3.4.5
+
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function bind(that) {
+
+      var target = this;
+
+      if (typeof target != "function") {
+        throw new TypeError();
+      }
+
+      var args = slice.call(arguments, 1);
+      var bound = function() {
+
+        if (this instanceof bound) {
+
+          var F = function(){};
+          F.prototype = target.prototype;
+          var self = new F();
+
+          var result = target.apply(
+            self,
+            args.concat(slice.call(arguments))
+          );
+          if (Object(result) === result) {
+            return result;
+          }
+          return self;
+
+        } else {
+
+          return target.apply(
+            that,
+            args.concat(slice.call(arguments))
+          );
+
+        }
+
+      };
+
+      return bound;
+    };
+  }
+
+  
+
+module.exports = Function.prototype.bind;
+},{"./slice":23}],19:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var cssomPrefixes = require('./cssomPrefixes');
 var is = require('./is');
@@ -5567,7 +5619,7 @@ var testDOMProps = require('./testDOMProps');
   
 
 module.exports = testPropsAll;
-},{"./ModernizrProto":14,"./cssomPrefixes":23,"./is":22,"./testProps":24,"./domPrefixes":25,"./testDOMProps":26}],19:[function(require,module,exports){
+},{"./ModernizrProto":14,"./cssomPrefixes":24,"./is":22,"./testProps":25,"./domPrefixes":26,"./testDOMProps":27}],20:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var docElement = require('./docElement');
 var createElement = require('./createElement');
@@ -5631,59 +5683,15 @@ var getBody = require('./getBody');
   
 
 module.exports = injectElementWithStyles;
-},{"./ModernizrProto":14,"./docElement":12,"./createElement":13,"./getBody":27}],20:[function(require,module,exports){
-var slice = require('./slice');
+},{"./ModernizrProto":14,"./docElement":13,"./createElement":10,"./getBody":28}],23:[function(require,module,exports){
+var classes = require('./classes');
 
 
-  // Adapted from ES5-shim https://github.com/kriskowal/es5-shim/blob/master/es5-shim.js
-  // es5.github.com/#x15.3.4.5
-
-  if (!Function.prototype.bind) {
-    Function.prototype.bind = function bind(that) {
-
-      var target = this;
-
-      if (typeof target != "function") {
-        throw new TypeError();
-      }
-
-      var args = slice.call(arguments, 1);
-      var bound = function() {
-
-        if (this instanceof bound) {
-
-          var F = function(){};
-          F.prototype = target.prototype;
-          var self = new F();
-
-          var result = target.apply(
-            self,
-            args.concat(slice.call(arguments))
-          );
-          if (Object(result) === result) {
-            return result;
-          }
-          return self;
-
-        } else {
-
-          return target.apply(
-            that,
-            args.concat(slice.call(arguments))
-          );
-
-        }
-
-      };
-
-      return bound;
-    };
-  }
-
+  var slice = classes.slice;
   
 
-module.exports = Function.prototype.bind;
-},{"./slice":28}],23:[function(require,module,exports){
+module.exports = slice;
+},{"./classes":15}],24:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 
@@ -5693,7 +5701,7 @@ var omPrefixes = require('./omPrefixes');
   
 
 module.exports = cssomPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],24:[function(require,module,exports){
+},{"./ModernizrProto":14,"./omPrefixes":29}],25:[function(require,module,exports){
 var contains = require('./contains');
 var mStyle = require('./mStyle');
 var createElement = require('./createElement');
@@ -5752,7 +5760,7 @@ var createElement = require('./createElement');
   
 
 module.exports = testProps;
-},{"./contains":30,"./mStyle":31,"./createElement":13}],25:[function(require,module,exports){
+},{"./mStyle":30,"./contains":31,"./createElement":10}],26:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 
@@ -5762,7 +5770,7 @@ var omPrefixes = require('./omPrefixes');
   
 
 module.exports = domPrefixes;
-},{"./ModernizrProto":14,"./omPrefixes":29}],26:[function(require,module,exports){
+},{"./ModernizrProto":14,"./omPrefixes":29}],27:[function(require,module,exports){
 var is = require('./is');
 require('./fnBind');
 
@@ -5799,7 +5807,7 @@ require('./fnBind');
   
 
 module.exports = testDOMProps;
-},{"./is":22,"./fnBind":20}],27:[function(require,module,exports){
+},{"./is":22,"./fnBind":18}],28:[function(require,module,exports){
 var createElement = require('./createElement');
 
 
@@ -5819,15 +5827,7 @@ var createElement = require('./createElement');
   
 
 module.exports = getBody;
-},{"./createElement":13}],28:[function(require,module,exports){
-var classes = require('./classes');
-
-
-  var slice = classes.slice;
-  
-
-module.exports = slice;
-},{"./classes":15}],29:[function(require,module,exports){
+},{"./createElement":10}],29:[function(require,module,exports){
 
   // Following spec is to expose vendor-specific style properties as:
   //   elem.style.WebkitBorderRadius
@@ -5842,7 +5842,7 @@ module.exports = slice;
   var omPrefixes = 'Webkit Moz O ms';
   
 module.exports = omPrefixes;
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 
   /**
    * contains returns a boolean for if substr is found within str.
@@ -5853,7 +5853,7 @@ module.exports = omPrefixes;
 
   
 module.exports = contains;
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var modElem = require('./modElem');
 
@@ -5892,5 +5892,5 @@ var createElement = require('./createElement');
   
 
 module.exports = modElem;
-},{"./Modernizr":9,"./createElement":13}]},{},[3])
+},{"./Modernizr":9,"./createElement":10}]},{},[3])
 ;
