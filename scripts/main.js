@@ -5341,7 +5341,12 @@ var docElement = require('./../../lib/docElement');
   });
 
 
-},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/testStyles":12,"./../../lib/docElement":13}],6:[function(require,module,exports){
+},{"./../../lib/Modernizr":9,"./../../lib/testStyles":11,"./../../lib/testAllProps":12,"./../../lib/docElement":13}],13:[function(require,module,exports){
+
+  var docElement = document.documentElement;
+  
+module.exports = docElement;
+},{}],6:[function(require,module,exports){
 var Modernizr = require('./lib/Modernizr'),
     ModernizrProto = require('./lib/ModernizrProto'),
     classes = require('./lib/classes'),
@@ -5364,12 +5369,7 @@ for (var i = 0; i < Modernizr._q.length; i++) {
 
 module.exports = Modernizr;
 
-},{"./lib/Modernizr":9,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],13:[function(require,module,exports){
-
-  var docElement = document.documentElement;
-  
-module.exports = docElement;
-},{}],15:[function(require,module,exports){
+},{"./lib/Modernizr":9,"./lib/ModernizrProto":14,"./lib/classes":15,"./lib/testRunner":16,"./lib/setClasses":17}],15:[function(require,module,exports){
 
   var classes = [];
   
@@ -5400,7 +5400,7 @@ var ModernizrProto = require('./ModernizrProto');
   
 
 module.exports = Modernizr;
-},{"./ModernizrProto":14}],12:[function(require,module,exports){
+},{"./ModernizrProto":14}],11:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5409,7 +5409,7 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":19}],11:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":19}],12:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var testPropsAll = require('./testPropsAll');
 
@@ -5707,7 +5707,15 @@ var testDOMProps = require('./testDOMProps');
   
 
 module.exports = testPropsAll;
-},{"./ModernizrProto":14,"./cssomPrefixes":25,"./is":22,"./testProps":26,"./domPrefixes":27,"./testDOMProps":28}],24:[function(require,module,exports){
+},{"./ModernizrProto":14,"./is":22,"./cssomPrefixes":25,"./testProps":26,"./domPrefixes":27,"./testDOMProps":28}],23:[function(require,module,exports){
+var classes = require('./classes');
+
+
+  var slice = classes.slice;
+  
+
+module.exports = slice;
+},{"./classes":15}],24:[function(require,module,exports){
 var createElement = require('./createElement');
 
 
@@ -5727,15 +5735,7 @@ var createElement = require('./createElement');
   
 
 module.exports = getBody;
-},{"./createElement":10}],23:[function(require,module,exports){
-var classes = require('./classes');
-
-
-  var slice = classes.slice;
-  
-
-module.exports = slice;
-},{"./classes":15}],25:[function(require,module,exports){
+},{"./createElement":10}],25:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var omPrefixes = require('./omPrefixes');
 

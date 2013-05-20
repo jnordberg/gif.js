@@ -146,6 +146,13 @@ h2 {
 header {
   padding-top: 1em;
 }
+header h1 {
+  overflow: hidden;
+  text-indent: -100%;
+  background: url(../images/logo.gif);
+  width: 600px;
+  height: 288px;
+}
 footer {
   text-align: center;
   font-size: 0.8em;
