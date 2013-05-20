@@ -7,8 +7,18 @@ require './vendor/mootools.js'
 async = require 'async'
 ready = require './vendor/ready.js'
 
-_URL = window.URL or window.webkitURL
 now = window.performance?.now?.bind(window.performance) or Date.now
+
+# fallback for browsers not supporting createObjectURL
+blobURLSupport = window.URL?.createObjectURL?
+buildDataURL = do ->
+  charMap = {}
+  charMap[i] = String.fromCharCode(i) for i in [0...256]
+  return (data) ->
+    str = ''
+    for i in [0...data.length]
+      str += charMap[data[i]]
+    return 'data:image/gif;base64,' + btoa(str)
 
 loadImage = (src, callback) ->
   img = new Image()
@@ -36,8 +46,11 @@ setupDemo = (element) ->
   gif.on 'start', ->
     startTime = now()
 
-  gif.on 'finished', (blob) ->
-    renderimg.src = _URL.createObjectURL(blob)
+  gif.on 'finished', (blob, data) ->
+    if blobURLSupport
+      renderimg.src = URL.createObjectURL(blob)
+    else
+      renderimg.src = buildDataURL(data)
     delta = now() - startTime
     logel.set 'text', "Rendered #{ images.length } frame(s) at q#{ gif.options.quality } in #{ delta.toFixed(2) }ms"
 
