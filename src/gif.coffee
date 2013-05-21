@@ -8,31 +8,58 @@ class GIF extends EventEmitter
     repeat: 0 # repeat forever, -1 = repeat once
     background: '#fff'
     quality: 10 # pixel sample interval, lower is better
+    width: null # size derermined from first frame if possible
+    height: null
 
-  constructor: (@options={}) ->
+  frameDefaults =
+    delay: 500 # ms
+    copy: false
+
+  constructor: (options) ->
     @running = false
-    @images = []
+
+    @options = {}
+    @frames = []
+
     @freeWorkers = []
     @activeWorkers = []
-    @canvas = document.createElement 'canvas'
+
+    @setOptions options
     for key, value of defaults
       @options[key] ?= value
 
   setOption: (key, value) ->
     @options[key] = value
+    if @_canvas? and key in ['width', 'height']
+      @_canvas[key] = value
 
   setOptions: (options) ->
-    for key, value of options
-      @options[key] = value
+    @setOption key, value for own key, value of options
 
-  addImage: (image, delay=1000, origin=[0, 0]) ->
-    @images.push {image, delay, origin}
-    if not @size?
-      @setSize [image.width, image.height]
+  addFrame: (image, options={}) ->
+    frame = {}
+    for key of frameDefaults
+      frame[key] = options[key] or frameDefaults[key]
 
-  setSize: (@size) ->
-    @canvas.width = @size[0]
-    @canvas.height = @size[1]
+    if image instanceof CanvasRenderingContext2D
+      if options.copy
+        frame.data = @getContextData image
+      else
+        frame.context = image
+    else if image.childNodes?
+      @setOption 'width', image.width unless @options.width?
+      @setOption 'height', image.height unless @options.height?
+      if options.copy
+        frame.data = @getImageData image
+      else
+        frame.image = image
+    else
+      throw new Error 'Invalid image'
+
+    @frames.push frame
+
+    @setOption 'width', frame.width if frame.width?
+    @setOption 'height', frame.height if frame.height?
 
   render: ->
     throw new Error 'Already running' if @running
@@ -41,7 +68,7 @@ class GIF extends EventEmitter
     @nextFrame = 0
     @finishedFrames = 0
 
-    @imageParts = (null for i in [0...@images.length])
+    @imageParts = (null for i in [0...@frames.length])
     numWorkers = @spawnWorkers()
     @renderNextFrame() for i in [0...numWorkers]
 
@@ -60,21 +87,22 @@ class GIF extends EventEmitter
   # private
 
   spawnWorkers: ->
-    numWorkers = Math.min(@options.workers, @images.length)
+    numWorkers = Math.min(@options.workers, @frames.length)
     for i in [@freeWorkers.length...numWorkers]
-      console.log "spawning worker"
-      worker = new Worker @options.workerScript
-      worker.onmessage = (event) =>
-        @activeWorkers.splice @activeWorkers.indexOf(worker), 1
+      do =>
+        console.log "spawning worker #{ i }"
+        worker = new Worker @options.workerScript
+        worker.onmessage = (event) =>
+          @activeWorkers.splice @activeWorkers.indexOf(worker), 1
+          @freeWorkers.push worker
+          @frameFinished event.data
         @freeWorkers.push worker
-        @frameFinished event.data
-      @freeWorkers.push worker
     return numWorkers
 
   frameFinished: (frame) ->
-    console.log "frame #{ frame.index } finished"
+    console.log "frame #{ frame.index } finished - #{ @activeWorkers.length } active"
     @finishedFrames++
-    @emit 'progress', @finishedFrames / @images.length
+    @emit 'progress', @finishedFrames / @frames.length
     @imageParts[frame.index] = frame
     if null in @imageParts
       @renderNextFrame()
@@ -103,31 +131,53 @@ class GIF extends EventEmitter
     @emit 'finished', image, data
 
   renderNextFrame: ->
-    if @freeWorkers.length is 0
-      throw new Error 'Can not start next frame, no free workers!'
-    return if @nextFrame >= @images.length # no new frame to render
-    image = @images[@nextFrame++]
-    worker = @freeWorkers.shift()
-    frame = @getFrame image
-    console.log "starting frame #{ frame.index + 1 } of #{ @images.length }"
-    @activeWorkers.push worker
-    worker.postMessage frame
+    throw new Error 'No free workers' if @freeWorkers.length is 0
+    return if @nextFrame >= @frames.length # no new frame to render
 
-  getFrame: (image) ->
-    index = @images.indexOf image
-    frame =
-      delay: image.delay
-      width: @size[0]
-      height: @size[1]
+    frame = @frames[@nextFrame++]
+    worker = @freeWorkers.shift()
+    task = @getTask frame
+
+    console.log "starting frame #{ task.index + 1 } of #{ @frames.length }"
+    @activeWorkers.push worker
+    worker.postMessage task#, [task.data.buffer]
+
+  getContextData: (ctx) ->
+    return ctx.getImageData(0, 0, @options.width, @options.height).data
+
+  getImageData: (image) ->
+    if not @_canvas?
+      @_canvas = document.createElement 'canvas'
+      @_canvas.width = @options.width
+      @_canvas.height = @options.height
+
+    ctx = @_canvas.getContext '2d'
+    ctx.setFill = @options.background
+    ctx.fillRect 0, 0, @options.width, @options.height
+    ctx.drawImage image, 0, 0
+
+    return @getContextData ctx
+
+  getTask: (frame) ->
+    index = @frames.indexOf frame
+    task =
       index: index
+      last: index is (@frames.length - 1)
+      delay: frame.delay
+      width: @options.width
+      height: @options.height
       quality: @options.quality
       repeat: @options.repeat
-      last: index is (@images.length - 1)
-    ctx = @canvas.getContext '2d'
-    ctx.setFill = @options.background
-    ctx.fillRect 0, 0, @size[0], @size[1]
-    ctx.drawImage image.image, image.origin[0], image.origin[1]
-    frame.data = ctx.getImageData(0, 0, @size[0], @size[1]).data
-    return frame
+
+    if frame.data?
+      task.data = frame.data
+    else if frame.context?
+      task.data = @getContextData frame.context
+    else if frame.image?
+      task.data = @getImageData frame.image
+    else
+      throw new Error 'Invalid frame'
+
+    return task
 
 module.exports = GIF
