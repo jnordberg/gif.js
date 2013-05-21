@@ -26,9 +26,14 @@ var gif = new GIF({
   quality: 10
 });
 
-gif.addImage(imageElement);
-gif.addImage(canvasElement, 200);
-// second argument is delay
+// add a image element
+gif.addFrame(imageElement);
+
+// or a canvas element
+gif.addFrame(canvasElement, {delay: 200});
+
+// or copy the pixels from a canvas context
+gif.addFrame(ctx, {copy: true});
 
 gif.on('finished', function(blob) {
   window.open(URL.createObjectURL(blob));
@@ -48,11 +53,17 @@ Options can be passed to the constructor or using the `setOptions` method.
 | workers      | `2`             | number of web workers to spawn                     |
 | workerScript | `gif.worker.js` | url to load worker script from                     |
 | background   | `#fff`          | background color where source image is transparent |
+| width        | `null`          | output image width                                 |
+| height       | `null`          | output image height                                |
 
-To set the size of the put image you can use `setSize` if not set it will be determined from the
-first frame added.
+If width or height is `null` image size will be deteremined by first frame added.
 
-There are also a few undocumented options, check the source.
+### addFrame options
+
+| Name         | Default         | Description                                        |
+| -------------|-----------------|----------------------------------------------------|
+| delay        | `500`           | frame delay                                        |
+| copy         | `false`         | copy the pixel data                                |
 
 ## Wishlist
 
@@ -60,6 +71,7 @@ If you want to contribute, here's some stuff that would be nice to have.
 
  * Tests
  * Fallbacks and polyfills for old browsers
+ * Dithering!
 
 ## Acknowledgements
 
