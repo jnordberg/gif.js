@@ -119,6 +119,10 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+html,
+body {
+  min-height: 100%;
+}
 body {
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 21px;
@@ -156,8 +160,13 @@ header h1 {
 footer {
   text-align: center;
   font-size: 0.8em;
-  padding: 1em;
+  padding: 10em 1em 1em;
   font-style: italic;
+}
+footer,
+footer a {
+  text-decoration: none;
+  color: #505050;
 }
 header,
 footer,
@@ -303,6 +312,10 @@ pre code {
   background: white;
   color: #4d4d4c;
   padding: 0.5em;
+}
+pre.src code {
+  font-size: 0.7em;
+  overflow: auto;
 }
 pre .coffeescript .javascript,
 pre .javascript .xml,

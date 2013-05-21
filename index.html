@@ -11,7 +11,7 @@
   <meta property="og:url" content="http://jnordberg.github.io/gif.js">
   <meta property="og:description" content="Full-featured JavaScript GIF encoder that runs in your browser.">
   <meta property="og:type" content="website">
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="/gif.js/styles/main.css">
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -40,9 +40,14 @@
   quality: <span class="number">10</span>
 });
 
-gif.addImage(imageElement);
-gif.addImage(canvasElement, <span class="number">200</span>);
-<span class="comment">// second argument is delay</span>
+<span class="comment">// add a image element</span>
+gif.addFrame(imageElement);
+
+<span class="comment">// or a canvas element</span>
+gif.addFrame(canvasElement, {delay: <span class="number">200</span>});
+
+<span class="comment">// or copy the pixels from a canvas context</span>
+gif.addFrame(ctx, {copy: <span class="literal">true</span>});
 
 gif.on(<span class="string">'finished'</span>, <span class="keyword">function</span>(blob) {
   window.open(URL.createObjectURL(blob));
@@ -141,9 +146,18 @@ gif.render();</code></pre>
     </div>
   </div>
 
+  <h2>Other tests</h2>
+  <ul>
+  
+    <li><a href="/gif.js/tests/canvas.html">Canvas rendering</a></li>
+  
+  </ul>
+
+
   </div>
   <footer>
-    <p>Free shit by <a href="http://johan-nordberg.com/">Johan Nordberg</a> – May 2013</p>
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/">&copy;&copy;</a> 2013
+    <a href="http://johan-nordberg.com/">Johan Nordberg</a>
   </footer>
 </body>
 </html>

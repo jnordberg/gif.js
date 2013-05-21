@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>gif.js</title>
+  <meta name="description" content="Full-featured JavaScript GIF encoder that runs in your browser.">
+  <meta name="keywords" content="gif, encoder, animation, browser, unicorn">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="gif.js">
+  <meta property="og:url" content="http://jnordberg.github.io/gif.js">
+  <meta property="og:description" content="Full-featured JavaScript GIF encoder that runs in your browser.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="/gif.js/styles/main.css">
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-41063995-1', 'jnordberg.github.io');
+    ga('send', 'pageview');
+  </script>
+  
+  <script src="/gif.js/gif.js"></script>
+  <script src="/gif.js/tests/canvas.js"></script>
+
+</head>
+<body>
+  <header>
+    <h1>gif.js</h1>
+    <p>Full-featured JavaScript GIF encoder that runs in your browser.</p>
+    <p class="github"><a href="https://github.com/jnordberg/gif.js">Download &amp; Docs on GitHub</a></p>
+  </header>
+  <div class="wrap">
+    
+<h2>Canvas rendering</h2>
+<div class="test">
+  <p id="info">Loading...</p>
+
+<p><img id="result"></p>
+
+</div>
+<h2>Source</h2>
+<pre class="src">
+  <code>require '../scripts/vendor/mootools.js'
+ready = require '../scripts/vendor/ready.js'
+
+num_frames = <span class="number">20</span>
+width = <span class="number">600</span>
+height = <span class="number">300</span>
+<span class="type">text</span> = 'HYPNO TOAD'
+textSize = <span class="number">70</span>
+
+now = window.performance?.now?.bind(window.performance) <span class="keyword">or</span> Date.now
+
+rgb = (rgb...) -&gt; <span class="string">"rgb(#{ rgb.map((v) -&gt; Math.floor(v * 255)).join(',') })"</span>
+hsl = (hsl...) -&gt;
+  hsl = hsl.map (v, i) -&gt; <span class="keyword">if</span> i <span class="keyword">is</span> <span class="number">0</span> <span class="keyword">then</span> v * <span class="number">360</span> <span class="keyword">else</span> <span class="string">"#{ v * 100 }%"</span>
+<span class="command">  return</span> <span class="string">"hsl(#{ hsl.join(',') })"</span>
+
+ready -&gt;
+  canvas = document.createElement 'canvas'
+  canvas.width = width
+  canvas.height = height
+
+  startTime = null
+  ctx = canvas.getContext '<span class="number">2</span>d'
+  info = document.<span class="property">id</span> 'info'
+
+  gif = new GIF
+    workers: <span class="number">4</span>
+    workerScript: '/gif.js/gif.worker.js'
+    width: width
+    height: height
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'start', -&gt; startTime = now()
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'progress', (p) -&gt; info.<span class="keyword">set</span> '<span class="type">text</span>', Math.<span class="command">round</span>(p * <span class="number">100</span>)+'%'
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'finished', (blob) -&gt;
+    img = document.<span class="property">id</span> '<span class="constant">result</span>'
+    img.src = URL.createObjectURL(blob)
+    delta = now() - startTime
+    info.<span class="keyword">set</span> '<span class="type">text</span>', <span class="string">""</span><span class="string">"
+      100%
+      #{ (delta / 1000).toFixed 2 }sec
+      #{ (blob.size / 1000).toFixed 2 }kb
+    "</span><span class="string">""</span>
+
+  ctx.font = <span class="string">"bold #{ textSize }px Helvetica"</span>
+  ctx.textAlign = 'center'
+  ctx.textBaseline = '<span class="keyword">middle</span>'
+  ctx.lineWidth = <span class="number">3</span>
+  w2 = width / <span class="number">2</span>
+  h2 = height / <span class="number">2</span>
+  <span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">0.</span>..num_frames]
+    p = i / (num_frames - <span class="number">1</span>)
+    grad = ctx.createRadialGradient w2, h2, <span class="number">0</span>, w2, h2, w2
+    grad.addColorStop <span class="number">0</span>, hsl p, <span class="number">1</span>, <span class="number">0.5</span>
+    grad.addColorStop <span class="number">1</span>, hsl (p + <span class="number">0.2</span>) % <span class="number">1</span>, <span class="number">1</span>, <span class="number">0.4</span>
+    ctx.fillStyle = grad
+    ctx.fillRect <span class="number">0</span>, <span class="number">0</span>, width, height
+    ctx.fillStyle = hsl (p + <span class="number">0.5</span>) % <span class="number">1</span>, <span class="number">1</span>, <span class="number">0.7</span>
+    ctx.strokeStyle = hsl (p + <span class="number">0.8</span>) % <span class="number">1</span>, <span class="number">1</span>, <span class="number">0.9</span>
+    ctx.fillText <span class="type">text</span>, w2, h2
+    ctx.strokeText <span class="type">text</span>, w2, h2
+    gif.addFrame ctx, {<span class="keyword">copy</span>: <span class="constant">true</span>, <span class="command">delay</span>: <span class="number">20</span>}
+
+  gif.render()
+</code>
+</pre>
+
+  </div>
+  <footer>
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/">&copy;&copy;</a> 2013
+    <a href="http://johan-nordberg.com/">Johan Nordberg</a>
+  </footer>
+</body>
+</html>
