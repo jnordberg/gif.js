@@ -3,8 +3,8 @@
 {% set script = contents.tests[page.metadata.script] %}
 
 {% block scripts %}
-  <script src="{{ env.config.baseUrl }}gif.js"></script>
-  <script src="{{ script.url }}"></script>
+  <script src="{{ env.config.baseUrl }}gif.js?v={{ version }}"></script>
+  <script src="{{ script.url }}?v={{ version }}"></script>
 {% endblock %}
 
 {% block body %}

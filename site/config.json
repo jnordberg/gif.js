@@ -3,7 +3,8 @@
     "name": "gif.js",
     "url": "http://jnordberg.github.io/gif.js",
     "description": "Full-featured JavaScript GIF encoder that runs in your browser.",
-    "keywords": "gif, encoder, animation, browser, unicorn"
+    "keywords": "gif, encoder, animation, browser, unicorn",
+    "version": "2"
   },
   "baseUrl": "/gif.js/",
   "require": {
