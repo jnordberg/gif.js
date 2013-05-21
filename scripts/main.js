@@ -5344,7 +5344,7 @@ var docElement = require('./../../lib/docElement');
   });
 
 
-},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/docElement":12,"./../../lib/testStyles":13}],12:[function(require,module,exports){
+},{"./../../lib/Modernizr":9,"./../../lib/testAllProps":11,"./../../lib/testStyles":12,"./../../lib/docElement":13}],13:[function(require,module,exports){
 
   var docElement = document.documentElement;
   
@@ -5377,15 +5377,7 @@ module.exports = Modernizr;
   var classes = [];
   
 module.exports = classes;
-},{}],10:[function(require,module,exports){
-require('./fnBind');
-
-
-  var createElement = document.createElement.bind(document);
-  
-
-module.exports = createElement;
-},{"./fnBind":18}],9:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 
 
@@ -5403,7 +5395,15 @@ var ModernizrProto = require('./ModernizrProto');
   
 
 module.exports = Modernizr;
-},{"./ModernizrProto":14}],11:[function(require,module,exports){
+},{"./ModernizrProto":14}],10:[function(require,module,exports){
+require('./fnBind');
+
+
+  var createElement = document.createElement.bind(document);
+  
+
+module.exports = createElement;
+},{"./fnBind":18}],11:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var testPropsAll = require('./testPropsAll');
 
@@ -5412,7 +5412,7 @@ var testPropsAll = require('./testPropsAll');
   
 
 module.exports = testAllProps;
-},{"./ModernizrProto":14,"./testPropsAll":19}],13:[function(require,module,exports){
+},{"./ModernizrProto":14,"./testPropsAll":19}],12:[function(require,module,exports){
 var ModernizrProto = require('./ModernizrProto');
 var injectElementWithStyles = require('./injectElementWithStyles');
 
@@ -5421,36 +5421,7 @@ var injectElementWithStyles = require('./injectElementWithStyles');
   
 
 module.exports = testStyles;
-},{"./ModernizrProto":14,"./injectElementWithStyles":20}],14:[function(require,module,exports){
-var tests = require('./tests');
-
-
-  var ModernizrProto = {
-    // The current version, dummy
-    _version : 'v3.0.0pre',
-
-    // Any settings that don't work as separate modules
-    // can go in here as configuration.
-    _config : {
-      classPrefix : '',
-      enableClasses : true
-    },
-
-    _q : [],
-
-    addTest : function( name, fn, options ) {
-      tests.push({name : name, fn : fn, options : options });
-    },
-
-    addAsyncTest : function (fn) {
-      tests.push({name : null, fn : fn});
-    }
-  };
-
-  
-
-module.exports = ModernizrProto;
-},{"./tests":21}],16:[function(require,module,exports){
+},{"./ModernizrProto":14,"./injectElementWithStyles":20}],16:[function(require,module,exports){
 var tests = require('./tests');
 var Modernizr = require('./Modernizr');
 var classes = require('./classes');
@@ -5499,7 +5470,36 @@ var is = require('./is');
   
 
 module.exports = testRunner;
-},{"./tests":21,"./Modernizr":9,"./classes":15,"./is":22}],17:[function(require,module,exports){
+},{"./tests":21,"./Modernizr":9,"./classes":15,"./is":22}],14:[function(require,module,exports){
+var tests = require('./tests');
+
+
+  var ModernizrProto = {
+    // The current version, dummy
+    _version : 'v3.0.0pre',
+
+    // Any settings that don't work as separate modules
+    // can go in here as configuration.
+    _config : {
+      classPrefix : '',
+      enableClasses : true
+    },
+
+    _q : [],
+
+    addTest : function( name, fn, options ) {
+      tests.push({name : name, fn : fn, options : options });
+    },
+
+    addAsyncTest : function (fn) {
+      tests.push({name : null, fn : fn});
+    }
+  };
+
+  
+
+module.exports = ModernizrProto;
+},{"./tests":21}],17:[function(require,module,exports){
 var Modernizr = require('./Modernizr');
 var docElement = require('./docElement');
 
@@ -5539,7 +5539,7 @@ var docElement = require('./docElement');
   
 
 module.exports = setClasses;
-},{"./Modernizr":9,"./docElement":12}],21:[function(require,module,exports){
+},{"./Modernizr":9,"./docElement":13}],21:[function(require,module,exports){
 
   var tests = [];
   
@@ -5710,7 +5710,7 @@ var getBody = require('./getBody');
   
 
 module.exports = injectElementWithStyles;
-},{"./ModernizrProto":14,"./docElement":12,"./createElement":10,"./getBody":28}],23:[function(require,module,exports){
+},{"./ModernizrProto":14,"./docElement":13,"./createElement":10,"./getBody":28}],23:[function(require,module,exports){
 var classes = require('./classes');
 
 
