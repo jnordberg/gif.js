@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>gif.js</title>
+  <meta name="description" content="Full-featured JavaScript GIF encoder that runs in your browser.">
+  <meta name="keywords" content="gif, encoder, animation, browser, unicorn">
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:title" content="gif.js">
+  <meta property="og:url" content="http://jnordberg.github.io/gif.js">
+  <meta property="og:description" content="Full-featured JavaScript GIF encoder that runs in your browser.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="/gif.js/styles/main.css">
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-41063995-1', 'jnordberg.github.io');
+    ga('send', 'pageview');
+  </script>
+  
+  <script src="/gif.js/gif.js?v=3"></script>
+  <script src="/gif.js/tests/video.js?v=3"></script>
+
+</head>
+<body>
+  <header>
+    <h1>gif.js</h1>
+    <p>Full-featured JavaScript GIF encoder that runs in your browser.</p>
+    <p class="github"><a href="https://github.com/jnordberg/gif.js">Download &amp; Docs on GitHub</a></p>
+  </header>
+  <div class="wrap">
+    
+<h2>Video to GIF</h2>
+<div class="test">
+  <p>
+  <input disabled id="sample" type="range" step="1" min="20" max="500" value="100">
+  <button id="go" disabled>Do it!</button>
+</p>
+
+<p id="info">Loading...</p>
+
+<video id="video" width="600">
+  <source src="clip.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.'>
+  <source src="clip.ogv" type='video/ogg; codecs="theora, vorbis"'>
+</video>
+
+<p><img id="result"></p>
+
+</div>
+<h2>Source</h2>
+<pre class="src">
+  <code>require '../scripts/vendor/mootools.js'
+ready = require '../scripts/vendor/ready.js'
+now = window.performance?.now?.bind(window.performance) <span class="keyword">or</span> Date.now
+
+ready -&gt;
+  info = document.<span class="property">id</span> 'info'
+  video = document.<span class="property">id</span> 'video'
+  button = document.<span class="property">id</span> 'go'
+  sample = document.<span class="property">id</span> 'sample'
+
+  gif = new GIF
+    workers: <span class="number">4</span>
+    workerScript: '/gif.js/gif.worker.js'
+    width: <span class="number">600</span>
+    height: <span class="number">337</span>
+
+  startTime = null
+  sampleInterval = null
+
+  sampleUpdate = -&gt;
+    sampleInterval = parseInt sample.value
+    gif.abort()
+    document.<span class="property">id</span>('info').<span class="keyword">set</span> '<span class="type">text</span>', <span class="string">""</span><span class="string">"
+      ready to start with a sample interval of #{ sampleInterval }ms
+    "</span><span class="string">""</span>
+
+  video.addEventListener 'canplay', -&gt;
+    button.disabled = <span class="constant">false</span>
+    sample.disabled = <span class="constant">false</span>
+    sampleUpdate()
+
+  sample.addEvent 'change', sampleUpdate
+
+  button.addEvent 'click', -&gt;
+    video.pause()
+    video.currentTime = <span class="number">0</span>
+    gif.abort()
+    gif.frames = []
+    video.play()
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'start', -&gt; startTime = now()
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'progress', (p) -&gt;
+    info.<span class="keyword">set</span> '<span class="type">text</span>', <span class="string">"rendering: #{ Math.round(p * 100) }%"</span>
+
+  gif.<span class="function_start"><span class="keyword">on</span> </span>'finished', (blob) -&gt;
+    img = document.<span class="property">id</span> '<span class="constant">result</span>'
+    img.src = URL.createObjectURL(blob)
+    delta = now() - startTime
+    info.<span class="keyword">set</span> '<span class="type">text</span>', <span class="string">""</span><span class="string">"
+      done in
+      #{ (delta / 1000).toFixed 2 }sec,
+      size #{ (blob.size / 1000).toFixed 2 }kb
+    "</span><span class="string">""</span>
+
+  <span class="comment"># this might not be the best approach to capturing</span>
+  <span class="comment"># html video, but i but i can't seek since my dev server</span>
+  <span class="comment"># doesn't support http byte requests</span>
+  timer = null
+  capture = -&gt;
+    info.<span class="keyword">set</span> 'html', <span class="string">"capturing at #{ video.currentTime }"</span>
+    gif.addFrame video, {<span class="keyword">copy</span>: <span class="constant">true</span>, <span class="command">delay</span>: sampleInterval}
+
+  video.addEventListener 'play', -&gt;
+    clearInterval timer
+    timer = setInterval capture, sampleInterval
+
+  video.addEventListener 'ended', -&gt;
+    clearInterval timer
+    gif.render()
+</code>
+</pre>
+
+  </div>
+  <footer>
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/">&copy;&copy;</a> 2013
+    <a href="http://johan-nordberg.com/">Johan Nordberg</a>
+  </footer>
+</body>
+</html>
