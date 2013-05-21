@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% set script = contents.tests[page.metadata.script] %}
+
+{% block scripts %}
+  <script src="{{ env.config.baseUrl }}gif.js"></script>
+  <script src="{{ script.url }}"></script>
+{% endblock %}
+
+{% block body %}
+<h2>{{ page.title }}</h2>
+<div class="test">
+  {{ page.html }}
+</div>
+<h2>Source</h2>
+<pre class="src">
+  <code>{{ hljs.highlightAuto(script.source).value }}</code>
+</pre>
+{% endblock %}

@@ -99,4 +99,12 @@
       </p>
     </div>
   </div>
+
+  <h2>Other tests</h2>
+  <ul>
+  {% for test in contents.tests._.pages %}
+    <li><a href="{{ test.url }}">{{ test.title }}</a></li>
+  {% endfor %}
+  </ul>
+
 {% endblock %}

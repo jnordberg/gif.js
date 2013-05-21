@@ -5,6 +5,7 @@
     "wintersmith-less": "*",
     "wintersmith-nunjucks": "*",
     "browsernizr": "*",
-    "async": "~0.2.8"
+    "async": "~0.2.8",
+    "highlight.js": "~7.3.0"
   }
 }

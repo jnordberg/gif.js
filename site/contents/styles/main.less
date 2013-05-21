@@ -6,7 +6,7 @@
 @text: #131313;
 
 html, body {
-
+  min-height: 100%;
 }
 
 body {
@@ -46,8 +46,12 @@ header {
 footer {
   text-align: center;
   font-size: 0.8em;
-  padding: 1em;
+  padding: 10em 1em 1em;
   font-style: italic;
+  &, a {
+    text-decoration: none;
+    color: #505050;
+  }
 }
 
 header, footer, .wrap {
@@ -166,6 +170,11 @@ pre code {
   background: white;
   color: #4d4d4c;
   padding: 0.5em;
+}
+
+pre.src code {
+  font-size: 0.7em;
+  overflow: auto;
 }
 
 pre .coffeescript .javascript,

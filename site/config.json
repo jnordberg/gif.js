@@ -5,6 +5,10 @@
     "description": "Full-featured JavaScript GIF encoder that runs in your browser.",
     "keywords": "gif, encoder, animation, browser, unicorn"
   },
+  "baseUrl": "/gif.js/",
+  "require": {
+    "hljs": "highlight.js"
+  },
   "plugins": [
     "wintersmith-browserify",
     "wintersmith-less",

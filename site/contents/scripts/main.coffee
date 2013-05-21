@@ -60,7 +60,7 @@ setupDemo = (element) ->
   images = element.getElements('img.original').map (img) -> img.src
   async.map images, loadImage, (error, images) ->
     throw error if error?
-    gif.addImage image, 500 for image in images
+    gif.addFrame image, {delay: 500, copy: true} for image in images
     gif.render()
 
   qslider.addEvent 'change', ->
@@ -75,8 +75,8 @@ setupDemo = (element) ->
     delay.getElement('input').addEvent 'change', ->
       value = parseInt this.value
       delay.getElement('.value').set 'text', value + 'ms'
-      for image in gif.images
-        image.delay = value
+      for frame in gif.frames
+        frame.delay = value
       gif.abort()
       gif.render()
 
