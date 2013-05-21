@@ -10,8 +10,6 @@
 var NeuQuant = require('./TypedNeuQuant.js');
 var LZWEncoder = require('./LZWEncoder.js');
 
-if (Uint8Array !== undefined) Uint8Array = Array;
-
 function ByteArray() {
   this.page = -1;
   this.pages = [];
