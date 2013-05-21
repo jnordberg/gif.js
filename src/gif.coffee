@@ -1,4 +1,5 @@
 {EventEmitter} = require 'events'
+browser = require './browser.coffee'
 
 class GIF extends EventEmitter
 
@@ -89,7 +90,7 @@ class GIF extends EventEmitter
   spawnWorkers: ->
     numWorkers = Math.min(@options.workers, @frames.length)
     for i in [@freeWorkers.length...numWorkers]
-      do =>
+      do (i) =>
         console.log "spawning worker #{ i }"
         worker = new Worker @options.workerScript
         worker.onmessage = (event) =>
@@ -168,6 +169,7 @@ class GIF extends EventEmitter
       height: @options.height
       quality: @options.quality
       repeat: @options.repeat
+      canTransfer: (browser.name is 'chrome')
 
     if frame.data?
       task.data = frame.data

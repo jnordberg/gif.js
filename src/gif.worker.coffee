@@ -19,7 +19,10 @@ renderFrame = (frame) ->
   frame.cursor = stream.cursor
   frame.pageSize = stream.constructor.pageSize
 
-  transfer = (page.buffer for page in frame.data)
-  self.postMessage frame, transfer
+  if frame.canTransfer
+    transfer = (page.buffer for page in frame.data)
+    self.postMessage frame, transfer
+  else
+    self.postMessage frame
 
 self.onmessage = (event) -> renderFrame event.data
