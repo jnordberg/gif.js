@@ -42,21 +42,24 @@ class GIF extends EventEmitter
     frame = {}
     for key of frameDefaults
       frame[key] = options[key] or frameDefaults[key]
-    unless frame.data
-      if (CanvasRenderingContext2D? and image instanceof CanvasRenderingContext2D) or (WebGLRenderingContext? and image instanceof WebGLRenderingContext)
-        if options.copy
-          frame.data = @getContextData image
-        else
-          frame.context = image
-      else if image.childNodes?
-        @setOption 'width', image.width unless @options.width?
-        @setOption 'height', image.height unless @options.height?
-        if options.copy
-          frame.data = @getImageData image
-        else
-          frame.image = image
+    if ImageData? and image instanceof ImageData
+       frame.data = image.data
+       frame.width = frame.witdh or image.width
+       frame.height = frame.height or image.height
+    else if (CanvasRenderingContext2D? and image instanceof CanvasRenderingContext2D) or (WebGLRenderingContext? and image instanceof WebGLRenderingContext)
+      if options.copy
+        frame.data = @getContextData image
       else
-        throw new Error 'Invalid image'
+        frame.context = image
+    else if image.childNodes?
+      @setOption 'width', image.width unless @options.width?
+      @setOption 'height', image.height unless @options.height?
+      if options.copy
+        frame.data = @getImageData image
+      else
+        frame.image = image
+    else
+      throw new Error 'Invalid image'
 
     @frames.push frame
 
