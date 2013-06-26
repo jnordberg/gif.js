@@ -15,6 +15,7 @@ class GIF extends EventEmitter
   frameDefaults =
     delay: 500 # ms
     copy: false
+    data: null
 
   constructor: (options) ->
     @running = false
@@ -41,21 +42,21 @@ class GIF extends EventEmitter
     frame = {}
     for key of frameDefaults
       frame[key] = options[key] or frameDefaults[key]
-
-    if (CanvasRenderingContext2D? and image instanceof CanvasRenderingContext2D) or (WebGLRenderingContext? and image instanceof WebGLRenderingContext)
-      if options.copy
-        frame.data = @getContextData image
+    unless frame.data
+      if (CanvasRenderingContext2D? and image instanceof CanvasRenderingContext2D) or (WebGLRenderingContext? and image instanceof WebGLRenderingContext)
+        if options.copy
+          frame.data = @getContextData image
+        else
+          frame.context = image
+      else if image.childNodes?
+        @setOption 'width', image.width unless @options.width?
+        @setOption 'height', image.height unless @options.height?
+        if options.copy
+          frame.data = @getImageData image
+        else
+          frame.image = image
       else
-        frame.context = image
-    else if image.childNodes?
-      @setOption 'width', image.width unless @options.width?
-      @setOption 'height', image.height unless @options.height?
-      if options.copy
-        frame.data = @getImageData image
-      else
-        frame.image = image
-    else
-      throw new Error 'Invalid image'
+        throw new Error 'Invalid image'
 
     @frames.push frame
 
