@@ -15,7 +15,6 @@ class GIF extends EventEmitter
   frameDefaults =
     delay: 500 # ms
     copy: false
-    data: null
 
   constructor: (options) ->
     @running = false
