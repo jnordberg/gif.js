@@ -41,18 +41,19 @@ class GIF extends EventEmitter
     frame = {}
     for key of frameDefaults
       frame[key] = options[key] or frameDefaults[key]
+
+    # use the images width and height for options unless already set
+    @setOption 'width', image.width unless @options.width?
+    @setOption 'height', image.height unless @options.height?
+
     if ImageData? and image instanceof ImageData
        frame.data = image.data
-       frame.width = frame.witdh or image.width
-       frame.height = frame.height or image.height
     else if (CanvasRenderingContext2D? and image instanceof CanvasRenderingContext2D) or (WebGLRenderingContext? and image instanceof WebGLRenderingContext)
       if options.copy
         frame.data = @getContextData image
       else
         frame.context = image
     else if image.childNodes?
-      @setOption 'width', image.width unless @options.width?
-      @setOption 'height', image.height unless @options.height?
       if options.copy
         frame.data = @getImageData image
       else
@@ -62,11 +63,11 @@ class GIF extends EventEmitter
 
     @frames.push frame
 
-    @setOption 'width', frame.width if frame.width?
-    @setOption 'height', frame.height if frame.height?
-
   render: ->
     throw new Error 'Already running' if @running
+
+    if not @options.width? or not @options.height?
+      throw new Error 'Width and height must be set prior to rendering'
 
     @running = true
     @nextFrame = 0
