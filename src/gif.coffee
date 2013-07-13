@@ -93,7 +93,7 @@ class GIF extends EventEmitter
 
   spawnWorkers: ->
     numWorkers = Math.min(@options.workers, @frames.length)
-    [@freeWorkers.length...numWorkers].each (i) =>
+    [@freeWorkers.length...numWorkers].forEach (i) =>
       console.log "spawning worker #{ i }"
       worker = new Worker @options.workerScript
       worker.onmessage = (event) =>
