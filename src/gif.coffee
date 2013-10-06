@@ -11,6 +11,7 @@ class GIF extends EventEmitter
     quality: 10 # pixel sample interval, lower is better
     width: null # size derermined from first frame if possible
     height: null
+    transparent: null
 
   frameDefaults =
     delay: 500 # ms
@@ -39,6 +40,7 @@ class GIF extends EventEmitter
 
   addFrame: (image, options={}) ->
     frame = {}
+    frame.transparent = @options.transparent
     for key of frameDefaults
       frame[key] = options[key] or frameDefaults[key]
 
