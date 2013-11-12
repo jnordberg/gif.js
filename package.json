@@ -1,10 +1,10 @@
 {
   "name": "gif.js",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "JavaScript GIF encoding library",
   "author": "Johan Nordberg <code@johan-nordberg.com>",
   "main": "index.js",
-  "repository": "",
+  "repository": "https://github.com/jnordberg/gif.js.git",
   "devDependencies": {
     "commonjs-everywhere": "~0.9.4"
   },
