@@ -11,6 +11,7 @@
   "scripts": {
     "prepublish": "./bin/build"
   },
+  "browser": "./dist/gif.js",
   "keywords": [
     "gif",
     "animation",
