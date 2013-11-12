@@ -6,7 +6,7 @@
   "main": "index.js",
   "repository": "",
   "devDependencies": {
-    "commonjs-everywhere": ">=0.7.2"
+    "commonjs-everywhere": "~0.9.4"
   },
   "scripts": {
     "prepublish": "./bin/build"

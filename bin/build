@@ -13,7 +13,7 @@ if [ -f ./node_modules/.bin/cjsify ]; then
     --output ./dist/gif.js \
     --inline-sources \
     --minify \
-    ./src/gif.coffee
+    gif.coffee
   echo -e "\n// gif.js $VERSION - $URL" >> ./dist/gif.js
   ./node_modules/.bin/cjsify \
     --root ./src/ \
@@ -22,7 +22,7 @@ if [ -f ./node_modules/.bin/cjsify ]; then
     --output ./dist/gif.worker.js \
     --inline-sources \
     --minify \
-    ./src/gif.worker.coffee
+    gif.worker.coffee
   echo -e "\n// gif.worker.js $VERSION - $URL" >> ./dist/gif.worker.js
   exit $?
 else
