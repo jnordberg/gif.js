@@ -55,6 +55,7 @@ Options can be passed to the constructor or using the `setOptions` method.
 | background   | `#fff`          | background color where source image is transparent |
 | width        | `null`          | output image width                                 |
 | height       | `null`          | output image height                                |
+| transparent  | `null`          | transparent hex color, `0x00FF00` = green          |
 
 If width or height is `null` image size will be deteremined by first frame added.
 
