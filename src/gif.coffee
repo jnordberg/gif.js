@@ -170,6 +170,7 @@ class GIF extends EventEmitter
       index: index
       last: index is (@frames.length - 1)
       delay: frame.delay
+      transparent: frame.transparent
       width: @options.width
       height: @options.height
       quality: @options.quality

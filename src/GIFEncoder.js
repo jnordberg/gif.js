@@ -242,7 +242,7 @@ GIFEncoder.prototype.findClosest = function(c) {
     var dg = g - (this.colorTab[i++] & 0xff);
     var db = b - (this.colorTab[i] & 0xff);
     var d = dr * dr + dg * dg + db * db;
-    var index = i / 3;
+    var index = parseInt(i / 3);
     if (this.usedEntry[index] && (d < dmin)) {
       dmin = d;
       minpos = index;
