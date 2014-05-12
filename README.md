@@ -26,7 +26,7 @@ var gif = new GIF({
   quality: 10
 });
 
-// add a image element
+// add an image element
 gif.addFrame(imageElement);
 
 // or a canvas element
