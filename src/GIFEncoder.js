@@ -236,7 +236,6 @@ GIFEncoder.prototype.analyzePixels = function() {
     imgq.buildColormap(); // create reduced palette
     this.colorTab = imgq.getColormap();
   }
-  if (!this.colorTab.cache) this.colorTab.cache = {};
 
   // map image pixels to new palette
   if (this.dither) {
@@ -380,7 +379,6 @@ GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   if (this.colorTab === null) return -1;
 
   var c = b | (g << 8) | (r << 16);
-  if (this.colorTab.cache[c]) return this.colorTab.cache[c];
 
   var minpos = 0;
   var dmin = 256 * 256 * 256;
@@ -398,7 +396,6 @@ GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
     }
     i++;
   }
-  this.colorTab.cache[c] = minpos;
 
   return minpos;
 };
