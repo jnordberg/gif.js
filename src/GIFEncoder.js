@@ -79,6 +79,7 @@ function GIFEncoder(width, height) {
   this.dispose = -1; // disposal code (-1 = use default)
   this.firstFrame = true;
   this.sample = 10; // default sample interval for quantizer
+  this.dither = false; // default dithering
 
   this.out = new ByteArray();
 }
@@ -183,6 +184,19 @@ GIFEncoder.prototype.setQuality = function(quality) {
 };
 
 /*
+  Sets dithering method. Available are:
+  - FALSE no dithering
+  - TRUE or FloydSteinberg
+  - FalseFloydSteinberg
+  - Stucki
+  - Atkinson
+*/
+GIFEncoder.prototype.setDither = function(dither) {
+  if (dither === true) dither = 'FloydSteinberg';
+  this.dither = dither;
+};
+
+/*
   Writes GIF file header
 */
 GIFEncoder.prototype.writeHeader = function() {
@@ -193,25 +207,16 @@ GIFEncoder.prototype.writeHeader = function() {
   Analyzes current frame colors and creates color map.
 */
 GIFEncoder.prototype.analyzePixels = function() {
-  var len = this.pixels.length;
-  var nPix = len / 3;
-
-  this.indexedPixels = new Uint8Array(nPix);
-
-  var imgq = new NeuQuant(this.pixels, this.sample);
-  imgq.buildColormap(); // create reduced palette
-  this.colorTab = imgq.getColormap();
+    var imgq = new NeuQuant(this.pixels, this.sample);
+    imgq.buildColormap(); // create reduced palette
+    this.colorTab = imgq.getColormap();
+    this.colorTab.cache = {};
 
   // map image pixels to new palette
-  var k = 0;
-  for (var j = 0; j < nPix; j++) {
-    var index = imgq.lookupRGB(
-      this.pixels[k++] & 0xff,
-      this.pixels[k++] & 0xff,
-      this.pixels[k++] & 0xff
-    );
-    this.usedEntry[index] = true;
-    this.indexedPixels[j] = index;
+  if (this.dither) {
+    this.ditherPixels(this.dither, false);
+  } else {
+    this.indexPixels();
   }
 
   this.pixels = null;
@@ -220,19 +225,137 @@ GIFEncoder.prototype.analyzePixels = function() {
 
   // get closest match to transparent color if specified
   if (this.transparent !== null) {
-    this.transIndex = this.findClosest(this.transparent);
+    this.transIndex = this.findClosest(this.transparent, true);
+  }
+};
+
+/*
+  Index pixels, without dithering
+*/
+GIFEncoder.prototype.indexPixels = function(imgq) {
+  var nPix = this.pixels.length / 3;
+  this.indexedPixels = new Uint8Array(nPix);
+  var k = 0;
+  for (var j = 0; j < nPix; j++) {
+    var index = this.findClosestRGB(
+      this.pixels[k++] & 0xff,
+      this.pixels[k++] & 0xff,
+      this.pixels[k++] & 0xff
+    );
+    this.usedEntry[index] = true;
+    this.indexedPixels[j] = index;
+  }
+};
+
+/*
+  Taken from http://jsbin.com/iXofIji/2/edit by PAEz
+*/
+GIFEncoder.prototype.ditherPixels = function(kernel, serpentine) {
+  var kernels = {
+    FalseFloydSteinberg: [
+      [3 / 8, 1, 0],
+      [3 / 8, 0, 1],
+      [2 / 8, 1, 1]
+    ],
+    FloydSteinberg: [
+      [7 / 16, 1, 0],
+      [3 / 16, -1, 1],
+      [5 / 16, 0, 1],
+      [1 / 16, 1, 1]
+    ],
+    Stucki: [
+      [8 / 42, 1, 0],
+      [4 / 42, 2, 0],
+      [2 / 42, -2, 1],
+      [4 / 42, -1, 1],
+      [8 / 42, 0, 1],
+      [4 / 42, 1, 1],
+      [2 / 42, 2, 1],
+      [1 / 42, -2, 2],
+      [2 / 42, -1, 2],
+      [4 / 42, 0, 2],
+      [2 / 42, 1, 2],
+      [1 / 42, 2, 2]
+    ],
+    Atkinson: [
+      [1 / 8, 1, 0],
+      [1 / 8, 2, 0],
+      [1 / 8, -1, 1],
+      [1 / 8, 0, 1],
+      [1 / 8, 1, 1],
+      [1 / 8, 0, 2]
+    ]
+  };
+
+  if (!kernel || !kernels[kernel]) {
+    throw 'Unknown dithering kernel: ' + kernel;
+  }
+
+  var ds = kernels[kernel];
+  var index = 0,
+    height = this.height,
+    width = this.width,
+    data = this.pixels;
+  var direction = serpentine ? -1 : 1;
+
+  this.indexedPixels = new Uint8Array(this.pixels.length / 3);
+
+  for (var y = 0; y < height; y++) {
+
+    if (serpentine) direction = direction * -1;
+
+    for (var x = (direction == 1 ? 0 : width - 1), xend = (direction == 1 ? width : 0); x !== xend; x += direction) {
+
+      index = (y * width) + x;
+      // Get original colour
+      var idx = index * 3;
+      var r1 = data[idx];
+      var g1 = data[idx + 1];
+      var b1 = data[idx + 2];
+
+      // Get converted colour
+      idx = this.findClosestRGB(r1, g1, b1);
+      this.usedEntry[idx] = true;
+      this.indexedPixels[index] = idx;
+      idx *= 3;
+      var r2 = this.colorTab[idx];
+      var g2 = this.colorTab[idx + 1];
+      var b2 = this.colorTab[idx + 2];
+
+      var er = r1 - r2;
+      var eg = g1 - g2;
+      var eb = b1 - b2;
+
+      for (var i = (direction == 1 ? 0: ds.length - 1), end = (direction == 1 ? ds.length : 0); i !== end; i += direction) {
+        var x1 = ds[i][1]; // *direction;  //  Should this by timesd by direction?..to make the kernel go in the opposite direction....got no idea....
+        var y1 = ds[i][2];
+        if (x1 + x >= 0 && x1 + x < width && y1 + y >= 0 && y1 + y < height) {
+          var d = ds[i][0];
+          idx = index + x1 + (y1 * width);
+          idx *= 3;
+
+          data[idx] = Math.max(0, Math.min(255, data[idx] + er * d));
+          data[idx + 1] = Math.max(0, Math.min(255, data[idx + 1] + eg * d));
+          data[idx + 2] = Math.max(0, Math.min(255, data[idx + 2] + eb * d));
+        }
+      }
+    }
   }
 };
 
 /*
   Returns index of palette color closest to c
 */
-GIFEncoder.prototype.findClosest = function(c) {
+GIFEncoder.prototype.findClosest = function(c, used) {
+  return this.findClosestRGB((c & 0xFF0000) >> 16, (c & 0x00FF00) >> 8, (c & 0x0000FF), used);
+};
+
+GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   if (this.colorTab === null) return -1;
 
-  var r = (c & 0xFF0000) >> 16;
-  var g = (c & 0x00FF00) >> 8;
-  var b = (c & 0x0000FF);
+  var c = b | (g << 8) | (r << 16);
+  if (this.colorTab.cache[c]) return this.colorTab.cache[c];
+
   var minpos = 0;
   var dmin = 256 * 256 * 256;
   var len = this.colorTab.length;
@@ -243,12 +366,13 @@ GIFEncoder.prototype.findClosest = function(c) {
     var db = b - (this.colorTab[i] & 0xff);
     var d = dr * dr + dg * dg + db * db;
     var index = parseInt(i / 3);
-    if (this.usedEntry[index] && (d < dmin)) {
+    if ((!used || this.usedEntry[index]) && (d < dmin)) {
       dmin = d;
       minpos = index;
     }
     i++;
   }
+  this.colorTab.cache[c] = minpos;
 
   return minpos;
 };
