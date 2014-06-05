@@ -190,6 +190,7 @@ GIFEncoder.prototype.setQuality = function(quality) {
   - FalseFloydSteinberg
   - Stucki
   - Atkinson
+  You can add '-serpentine' to use serpentine scanning
 */
 GIFEncoder.prototype.setDither = function(dither) {
   if (dither === true) dither = 'FloydSteinberg';
@@ -214,7 +215,7 @@ GIFEncoder.prototype.analyzePixels = function() {
 
   // map image pixels to new palette
   if (this.dither) {
-    this.ditherPixels(this.dither, false);
+    this.ditherPixels(this.dither.replace('-serpentine', ''), this.dither.match(/-serpentine/) !== null);
   } else {
     this.indexPixels();
   }
