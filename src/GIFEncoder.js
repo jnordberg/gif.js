@@ -144,12 +144,12 @@ GIFEncoder.prototype.setTransparent = function(color) {
 GIFEncoder.prototype.addFrame = function(imageData) {
   this.image = imageData;
 
-  if (!this.globalPalette) this.colorTab = null;
+  this.colorTab = this.globalPalette.slice ? this.globalPalette : null;
 
   this.getImagePixels(); // convert to correct format if necessary
   this.analyzePixels(); // build color table & map pixels
 
-  if (this.globalPalette === true) this.globalPalette = colorTab;
+  if (this.globalPalette === true) this.globalPalette = this.colorTab;
 
   if (this.firstFrame) {
     this.writeLSD(); // logical screen descriptior
@@ -211,6 +211,14 @@ GIFEncoder.prototype.setGlobalPalette = function(palette) {
   this.globalPalette = palette;
 };
 
+/*
+  Returns global palette used for all frames.
+  If setGlobalPalette(true) was used, then this function will return
+  calculated palette after the first frame is added.
+*/
+GIFEncoder.prototype.getGlobalPalette = function() {
+  return (this.globalPalette.slice && this.globalPalette.slice(0)) || this.globalPalette;
+};
 
 /*
   Writes GIF file header
@@ -227,8 +235,8 @@ GIFEncoder.prototype.analyzePixels = function() {
     var imgq = new NeuQuant(this.pixels, this.sample);
     imgq.buildColormap(); // create reduced palette
     this.colorTab = imgq.getColormap();
-    this.colorTab.cache = {};
   }
+  if (!this.colorTab.cache) this.colorTab.cache = {};
 
   // map image pixels to new palette
   if (this.dither) {

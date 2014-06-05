@@ -77,7 +77,11 @@ class GIF extends EventEmitter
 
     @imageParts = (null for i in [0...@frames.length])
     numWorkers = @spawnWorkers()
-    @renderNextFrame() for i in [0...numWorkers]
+    # we need to wait for the palette
+    if @options.globalPalette == true
+      @renderNextFrame()
+    else
+      @renderNextFrame() for i in [0...numWorkers]
 
     @emit 'start'
     @emit 'progress', 0
@@ -110,6 +114,11 @@ class GIF extends EventEmitter
     @finishedFrames++
     @emit 'progress', @finishedFrames / @frames.length
     @imageParts[frame.index] = frame
+    # remember calculated palette, spawn the rest of the workers
+    if @options.globalPalette == true
+      @options.globalPalette = frame.globalPalette
+      console.log "global palette analyzed"
+      @renderNextFrame() for i in [1...@freeWorkers.length] if @frames.length > 2
     if null in @imageParts
       @renderNextFrame()
     else
@@ -175,6 +184,7 @@ class GIF extends EventEmitter
       height: @options.height
       quality: @options.quality
       dither: @options.dither
+      globalPalette: @options.globalPalette
       repeat: @options.repeat
       canTransfer: (browser.name is 'chrome')
 

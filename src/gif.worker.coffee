@@ -16,6 +16,8 @@ renderFrame = (frame) ->
   encoder.setGlobalPalette frame.globalPalette
   encoder.addFrame frame.data
   encoder.finish() if frame.last
+  if frame.globalPalette == true
+    frame.globalPalette = encoder.getGlobalPalette()
 
   stream = encoder.stream()
   frame.data = stream.pages
