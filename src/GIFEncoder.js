@@ -80,6 +80,7 @@ function GIFEncoder(width, height) {
   this.firstFrame = true;
   this.sample = 10; // default sample interval for quantizer
   this.dither = false; // default dithering
+  this.globalPalette = false;
 
   this.out = new ByteArray();
 }
@@ -143,8 +144,12 @@ GIFEncoder.prototype.setTransparent = function(color) {
 GIFEncoder.prototype.addFrame = function(imageData) {
   this.image = imageData;
 
+  if (!this.globalPalette) this.colorTab = null;
+
   this.getImagePixels(); // convert to correct format if necessary
   this.analyzePixels(); // build color table & map pixels
+
+  if (this.globalPalette === true) this.globalPalette = colorTab;
 
   if (this.firstFrame) {
     this.writeLSD(); // logical screen descriptior
@@ -157,7 +162,7 @@ GIFEncoder.prototype.addFrame = function(imageData) {
 
   this.writeGraphicCtrlExt(); // write graphic control extension
   this.writeImageDesc(); // image descriptor
-  if (!this.firstFrame) this.writePalette(); // local color table
+  if (!this.firstFrame && !this.globalPalette) this.writePalette(); // local color table
   this.writePixels(); // encode and write pixel data
 
   this.firstFrame = false;
@@ -198,6 +203,16 @@ GIFEncoder.prototype.setDither = function(dither) {
 };
 
 /*
+  Sets global palette for all frames.
+  You can provide TRUE to create global palette from first picture.
+  Or an array of r,g,b,r,g,b,...
+*/
+GIFEncoder.prototype.setGlobalPalette = function(palette) {
+  this.globalPalette = palette;
+};
+
+
+/*
   Writes GIF file header
 */
 GIFEncoder.prototype.writeHeader = function() {
@@ -208,10 +223,12 @@ GIFEncoder.prototype.writeHeader = function() {
   Analyzes current frame colors and creates color map.
 */
 GIFEncoder.prototype.analyzePixels = function() {
+  if (!this.colorTab) {
     var imgq = new NeuQuant(this.pixels, this.sample);
     imgq.buildColormap(); // create reduced palette
     this.colorTab = imgq.getColormap();
     this.colorTab.cache = {};
+  }
 
   // map image pixels to new palette
   if (this.dither) {
@@ -446,7 +463,7 @@ GIFEncoder.prototype.writeImageDesc = function() {
   this.writeShort(this.height);
 
   // packed fields
-  if (this.firstFrame) {
+  if (this.firstFrame || this.globalPalette) {
     // no LCT - GCT is used for first (or only) frame
     this.out.writeByte(0);
   } else {
