@@ -12,6 +12,7 @@ renderFrame = (frame) ->
   encoder.setRepeat frame.repeat
   encoder.setDelay frame.delay
   encoder.setQuality frame.quality
+  encoder.setDither frame.dither
   encoder.addFrame frame.data
   encoder.finish() if frame.last
 

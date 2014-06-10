@@ -174,6 +174,7 @@ class GIF extends EventEmitter
       width: @options.width
       height: @options.height
       quality: @options.quality
+      dither: @options.dither
       repeat: @options.repeat
       canTransfer: (browser.name is 'chrome')
 
