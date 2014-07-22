@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 URL="https://github.com/jnordberg/gif.js"
 TMP="./dist/tmp"
