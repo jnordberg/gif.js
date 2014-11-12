@@ -144,6 +144,7 @@ GIFEncoder.prototype.setTransparent = function(color) {
 GIFEncoder.prototype.addFrame = function(imageData) {
   this.image = imageData;
 
+  this.globalPalette = this.globalPalette || false;
   this.colorTab = this.globalPalette.slice ? this.globalPalette : null;
 
   this.getImagePixels(); // convert to correct format if necessary

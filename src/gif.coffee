@@ -1,6 +1,8 @@
 {EventEmitter} = require 'events'
 browser = require './browser.coffee'
 
+WebWork = require 'webworkify'
+
 class GIF extends EventEmitter
 
   defaults =
@@ -101,8 +103,8 @@ class GIF extends EventEmitter
     numWorkers = Math.min(@options.workers, @frames.length)
     [@freeWorkers.length...numWorkers].forEach (i) =>
       console.log "spawning worker #{ i }"
-      worker = new Worker @options.workerScript
-      worker.onmessage = (event) =>
+      worker = WebWork(require('./gif.worker.coffee'))
+      worker.addEventListener 'message', (event) =>
         @activeWorkers.splice @activeWorkers.indexOf(worker), 1
         @freeWorkers.push worker
         @frameFinished event.data

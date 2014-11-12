@@ -6,17 +6,27 @@
   "main": "index.js",
   "repository": "https://github.com/jnordberg/gif.js.git",
   "devDependencies": {
+    "browserify": "^6.3.2",
     "commonjs-everywhere": "~0.9.4"
   },
   "scripts": {
     "prepublish": "./bin/build"
   },
-  "browser": "./dist/gif.js",
+  "browser": "./src/gif.coffee",
   "keywords": [
     "gif",
     "animation",
     "encoder"
   ],
   "license": "MIT",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "coffeeify": "^0.7.0",
+    "webworkify": "^1.0.0"
+  },
+  "browserify": {
+    "transform": [
+      "coffeeify"
+    ]
+  }
 }
