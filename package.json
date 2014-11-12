@@ -21,7 +21,8 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "coffeeify": "^0.7.0"
+    "coffeeify": "^0.7.0",
+    "webworkify": "^1.0.0"
   },
   "browserify": {
     "transform": [
