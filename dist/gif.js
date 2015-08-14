@@ -1,3 +1,527 @@
-(function(c){function a(b,d){if({}.hasOwnProperty.call(a.cache,b))return a.cache[b];var e=a.resolve(b);if(!e)throw new Error('Failed to resolve module '+b);var c={id:b,require:a,filename:b,exports:{},loaded:!1,parent:d,children:[]};d&&d.children.push(c);var f=b.slice(0,b.lastIndexOf('/')+1);return a.cache[b]=c.exports,e.call(c.exports,c,c.exports,f,b),c.loaded=!0,a.cache[b]=c.exports}a.modules={},a.cache={},a.resolve=function(b){return{}.hasOwnProperty.call(a.modules,b)?a.modules[b]:void 0},a.define=function(b,c){a.modules[b]=c};var b=function(a){return a='/',{title:'browser',version:'v0.10.32',browser:!0,env:{},argv:[],nextTick:c.setImmediate||function(a){setTimeout(a,0)},cwd:function(){return a},chdir:function(b){a=b}}}();a.define('/gif.coffee',function(d,m,l,k){function g(a,b){return{}.hasOwnProperty.call(a,b)}function j(d,b){for(var a=0,c=b.length;a<c;++a)if(a in b&&b[a]===d)return!0;return!1}function i(a,b){function d(){this.constructor=a}for(var c in b)g(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a}var h,c,f,b,e;f=a('events',d).EventEmitter,h=a('/browser.coffee',d),e=function(d){function a(d){var a,b;this.running=!1,this.options={},this.frames=[],this.freeWorkers=[],this.activeWorkers=[],this.setOptions(d);for(a in c)b=c[a],null!=this.options[a]?this.options[a]:this.options[a]=b}return i(a,d),c={workerScript:'gif.worker.js',workers:2,repeat:0,background:'#fff',quality:10,width:null,height:null,transparent:null},b={delay:500,copy:!1},a.prototype.setOption=function(a,b){return this.options[a]=b,null!=this._canvas&&(a==='width'||a==='height')?this._canvas[a]=b:void 0},a.prototype.setOptions=function(b){var a,c;return function(d){for(a in b){if(!g(b,a))continue;c=b[a],d.push(this.setOption(a,c))}return d}.call(this,[])},a.prototype.addFrame=function(a,d){var c,e;null==d&&(d={}),c={},c.transparent=this.options.transparent;for(e in b)c[e]=d[e]||b[e];if(null!=this.options.width||this.setOption('width',a.width),null!=this.options.height||this.setOption('height',a.height),'undefined'!==typeof ImageData&&null!=ImageData&&a instanceof ImageData)c.data=a.data;else if('undefined'!==typeof CanvasRenderingContext2D&&null!=CanvasRenderingContext2D&&a instanceof CanvasRenderingContext2D||'undefined'!==typeof WebGLRenderingContext&&null!=WebGLRenderingContext&&a instanceof WebGLRenderingContext)d.copy?c.data=this.getContextData(a):c.context=a;else if(null!=a.childNodes)d.copy?c.data=this.getImageData(a):c.image=a;else throw new Error('Invalid image');return this.frames.push(c)},a.prototype.render=function(){var d,a;if(this.running)throw new Error('Already running');if(!(null!=this.options.width&&null!=this.options.height))throw new Error('Width and height must be set prior to rendering');if(this.running=!0,this.nextFrame=0,this.finishedFrames=0,this.imageParts=function(c){for(var b=function(){var b;b=[];for(var a=0;0<=this.frames.length?a<this.frames.length:a>this.frames.length;0<=this.frames.length?++a:--a)b.push(a);return b}.apply(this,arguments),a=0,e=b.length;a<e;++a)d=b[a],c.push(null);return c}.call(this,[]),a=this.spawnWorkers(),this.options.globalPalette===!0)this.renderNextFrame();else for(var c=function(){var c;c=[];for(var b=0;0<=a?b<a:b>a;0<=a?++b:--b)c.push(b);return c}.apply(this,arguments),b=0,e=c.length;b<e;++b)d=c[b],this.renderNextFrame();return this.emit('start'),this.emit('progress',0)},a.prototype.abort=function(){var a;while(!0){if(a=this.activeWorkers.shift(),!(null!=a))break;console.log('killing active worker'),a.terminate()}return this.running=!1,this.emit('abort')},a.prototype.spawnWorkers=function(){var a;return a=Math.min(this.options.workers,this.frames.length),function(){var c;c=[];for(var b=this.freeWorkers.length;this.freeWorkers.length<=a?b<a:b>a;this.freeWorkers.length<=a?++b:--b)c.push(b);return c}.apply(this,arguments).forEach(function(a){return function(c){var b;return console.log('spawning worker '+c),b=new Worker(a.options.workerScript),b.onmessage=function(a){return function(c){return a.activeWorkers.splice(a.activeWorkers.indexOf(b),1),a.freeWorkers.push(b),a.frameFinished(c.data)}}(a),a.freeWorkers.push(b)}}(this)),a},a.prototype.frameFinished=function(a){var e;if(console.log('frame '+a.index+' finished - '+this.activeWorkers.length+' active'),this.finishedFrames++,this.emit('progress',this.finishedFrames/this.frames.length),this.imageParts[a.index]=a,this.options.globalPalette===!0&&(this.options.globalPalette=a.globalPalette,console.log('global palette analyzed'),this.frames.length>2))for(var c=function(){var b;b=[];for(var a=1;1<=this.freeWorkers.length?a<this.freeWorkers.length:a>this.freeWorkers.length;1<=this.freeWorkers.length?++a:--a)b.push(a);return b}.apply(this,arguments),b=0,d=c.length;b<d;++b)e=c[b],this.renderNextFrame();return j(null,this.imageParts)?this.renderNextFrame():this.finishRendering()},a.prototype.finishRendering=function(){var e,a,k,m,b,d,h;b=0;for(var f=0,j=this.imageParts.length;f<j;++f)a=this.imageParts[f],b+=(a.data.length-1)*a.pageSize+a.cursor;b+=a.pageSize-a.cursor,console.log('rendering finished - filesize '+Math.round(b/1e3)+'kb'),e=new Uint8Array(b),d=0;for(var g=0,l=this.imageParts.length;g<l;++g){a=this.imageParts[g];for(var c=0,i=a.data.length;c<i;++c)h=a.data[c],k=c,e.set(h,d),k===a.data.length-1?d+=a.cursor:d+=a.pageSize}return m=new Blob([e],{type:'image/gif'}),this.emit('finished',m,e)},a.prototype.renderNextFrame=function(){var c,a,b;if(this.freeWorkers.length===0)throw new Error('No free workers');return this.nextFrame>=this.frames.length?void 0:(c=this.frames[this.nextFrame++],b=this.freeWorkers.shift(),a=this.getTask(c),console.log('starting frame '+(a.index+1)+' of '+this.frames.length),this.activeWorkers.push(b),b.postMessage(a))},a.prototype.getContextData=function(a){return a.getImageData(0,0,this.options.width,this.options.height).data},a.prototype.getImageData=function(b){var a;return null!=this._canvas||(this._canvas=document.createElement('canvas'),this._canvas.width=this.options.width,this._canvas.height=this.options.height),a=this._canvas.getContext('2d'),a.setFill=this.options.background,a.fillRect(0,0,this.options.width,this.options.height),a.drawImage(b,0,0),this.getContextData(a)},a.prototype.getTask=function(a){var c,b;if(c=this.frames.indexOf(a),b={index:index,last:c===this.frames.length-1,delay:a.delay,transparent:a.transparent,width:this.options.width,height:this.options.height,quality:this.options.quality,dither:this.options.dither,globalPalette:this.options.globalPalette,repeat:this.options.repeat,canTransfer:h.name==='chrome'},null!=a.data)b.data=a.data;else if(null!=a.context)b.data=this.getContextData(a.context);else if(null!=a.image)b.data=this.getImageData(a.image);else throw new Error('Invalid frame');return b},a}(f),d.exports=e}),a.define('/browser.coffee',function(f,g,h,i){var a,d,e,c,b;c=navigator.userAgent.toLowerCase(),e=navigator.platform.toLowerCase(),b=c.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/)||[null,'unknown',0],d=b[1]==='ie'&&document.documentMode,a={name:b[1]==='version'?b[3]:b[1],version:d||parseFloat(b[1]==='opera'&&b[4]?b[4]:b[2]),platform:{name:c.match(/ip(?:ad|od|hone)/)?'ios':(c.match(/(?:webos|android)/)||e.match(/mac|win|linux/)||['other'])[0]}},a[a.name]=!0,a[a.name+parseInt(a.version,10)]=!0,a.platform[a.platform.name]=!0,f.exports=a}),a.define('events',function(f,e,g,h){b.EventEmitter||(b.EventEmitter=function(){});var a=e.EventEmitter=b.EventEmitter,c=typeof Array.isArray==='function'?Array.isArray:function(a){return Object.prototype.toString.call(a)==='[object Array]'},d=10;a.prototype.setMaxListeners=function(a){this._events||(this._events={}),this._events.maxListeners=a},a.prototype.emit=function(f){if(f==='error'&&(!(this._events&&this._events.error)||c(this._events.error)&&!this._events.error.length))throw arguments[1]instanceof Error?arguments[1]:new Error("Uncaught, unspecified 'error' event.");if(!this._events)return!1;var a=this._events[f];if(!a)return!1;if(!(typeof a=='function'))if(c(a)){var b=Array.prototype.slice.call(arguments,1),e=a.slice();for(var d=0,g=e.length;d<g;d++)e[d].apply(this,b);return!0}else return!1;switch(arguments.length){case 1:a.call(this);break;case 2:a.call(this,arguments[1]);break;case 3:a.call(this,arguments[1],arguments[2]);break;default:var b=Array.prototype.slice.call(arguments,1);a.apply(this,b)}return!0},a.prototype.addListener=function(a,b){if('function'!==typeof b)throw new Error('addListener only takes instances of Function');if(this._events||(this._events={}),this.emit('newListener',a,b),!this._events[a])this._events[a]=b;else if(c(this._events[a])){if(!this._events[a].warned){var e;this._events.maxListeners!==undefined?e=this._events.maxListeners:e=d,e&&e>0&&this._events[a].length>e&&(this._events[a].warned=!0,console.error('(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.',this._events[a].length),console.trace())}this._events[a].push(b)}else this._events[a]=[this._events[a],b];return this},a.prototype.on=a.prototype.addListener,a.prototype.once=function(b,c){var a=this;return a.on(b,function d(){a.removeListener(b,d),c.apply(this,arguments)}),this},a.prototype.removeListener=function(a,d){if('function'!==typeof d)throw new Error('removeListener only takes instances of Function');if(!(this._events&&this._events[a]))return this;var b=this._events[a];if(c(b)){var e=b.indexOf(d);if(e<0)return this;b.splice(e,1),b.length==0&&delete this._events[a]}else this._events[a]===d&&delete this._events[a];return this},a.prototype.removeAllListeners=function(a){return a&&this._events&&this._events[a]&&(this._events[a]=null),this},a.prototype.listeners=function(a){return this._events||(this._events={}),this._events[a]||(this._events[a]=[]),c(this._events[a])||(this._events[a]=[this._events[a]]),this._events[a]}}),c.GIF=a('/gif.coffee')}.call(this,this))
-//# sourceMappingURL=gif.js.map
+// Generated by CommonJS Everywhere 0.9.7
+(function (global) {
+  function require(file, parentModule) {
+    if ({}.hasOwnProperty.call(require.cache, file))
+      return require.cache[file];
+    var resolved = require.resolve(file);
+    if (!resolved)
+      throw new Error('Failed to resolve module ' + file);
+    var module$ = {
+        id: file,
+        require: require,
+        filename: file,
+        exports: {},
+        loaded: false,
+        parent: parentModule,
+        children: []
+      };
+    if (parentModule)
+      parentModule.children.push(module$);
+    var dirname = file.slice(0, file.lastIndexOf('/') + 1);
+    require.cache[file] = module$.exports;
+    resolved.call(module$.exports, module$, module$.exports, dirname, file);
+    module$.loaded = true;
+    return require.cache[file] = module$.exports;
+  }
+  require.modules = {};
+  require.cache = {};
+  require.resolve = function (file) {
+    return {}.hasOwnProperty.call(require.modules, file) ? require.modules[file] : void 0;
+  };
+  require.define = function (file, fn) {
+    require.modules[file] = fn;
+  };
+  var process = function () {
+      var cwd = '/';
+      return {
+        title: 'browser',
+        version: 'v0.10.32',
+        browser: true,
+        env: {},
+        argv: [],
+        nextTick: global.setImmediate || function (fn) {
+          setTimeout(fn, 0);
+        },
+        cwd: function () {
+          return cwd;
+        },
+        chdir: function (dir) {
+          cwd = dir;
+        }
+      };
+    }();
+  require.define('/gif.coffee', function (module, exports, __dirname, __filename) {
+    var browser, defaults, EventEmitter, frameDefaults, GIF;
+    EventEmitter = require('events', module).EventEmitter;
+    browser = require('/browser.coffee', module);
+    GIF = function (super$) {
+      extends$(GIF, super$);
+      defaults = {
+        workerScript: 'gif.worker.js',
+        workers: 2,
+        repeat: 0,
+        background: '#fff',
+        quality: 10,
+        width: null,
+        height: null,
+        transparent: null
+      };
+      frameDefaults = {
+        delay: 500,
+        copy: false
+      };
+      function GIF(options) {
+        var key, value;
+        this.running = false;
+        this.options = {};
+        this.frames = [];
+        this.freeWorkers = [];
+        this.activeWorkers = [];
+        this.setOptions(options);
+        for (key in defaults) {
+          value = defaults[key];
+          if (null != this.options[key])
+            this.options[key];
+          else
+            this.options[key] = value;
+        }
+      }
+      GIF.prototype.setOption = function (key, value) {
+        this.options[key] = value;
+        if (null != this._canvas && (key === 'width' || key === 'height'))
+          return this._canvas[key] = value;
+      };
+      GIF.prototype.setOptions = function (options) {
+        var key, value;
+        return function (accum$) {
+          for (key in options) {
+            if (!isOwn$(options, key))
+              continue;
+            value = options[key];
+            accum$.push(this.setOption(key, value));
+          }
+          return accum$;
+        }.call(this, []);
+      };
+      GIF.prototype.addFrame = function (image, options) {
+        var frame, key;
+        if (null == options)
+          options = {};
+        frame = {};
+        frame.transparent = this.options.transparent;
+        for (key in frameDefaults) {
+          frame[key] = options[key] || frameDefaults[key];
+        }
+        if (!(null != this.options.width))
+          this.setOption('width', image.width);
+        if (!(null != this.options.height))
+          this.setOption('height', image.height);
+        if ('undefined' !== typeof ImageData && null != ImageData && image instanceof ImageData) {
+          frame.data = image.data;
+        } else if ('undefined' !== typeof CanvasRenderingContext2D && null != CanvasRenderingContext2D && image instanceof CanvasRenderingContext2D || 'undefined' !== typeof WebGLRenderingContext && null != WebGLRenderingContext && image instanceof WebGLRenderingContext) {
+          if (options.copy) {
+            frame.data = this.getContextData(image);
+          } else {
+            frame.context = image;
+          }
+        } else if (null != image.childNodes) {
+          if (options.copy) {
+            frame.data = this.getImageData(image);
+          } else {
+            frame.image = image;
+          }
+        } else {
+          throw new Error('Invalid image');
+        }
+        return this.frames.push(frame);
+      };
+      GIF.prototype.render = function () {
+        var i, numWorkers;
+        if (this.running)
+          throw new Error('Already running');
+        if (!(null != this.options.width) || !(null != this.options.height))
+          throw new Error('Width and height must be set prior to rendering');
+        this.running = true;
+        this.nextFrame = 0;
+        this.finishedFrames = 0;
+        this.imageParts = function (accum$) {
+          for (var cache$ = function () {
+                var accum$1;
+                accum$1 = [];
+                for (var i$ = 0; 0 <= this.frames.length ? i$ < this.frames.length : i$ > this.frames.length; 0 <= this.frames.length ? ++i$ : --i$)
+                  accum$1.push(i$);
+                return accum$1;
+              }.apply(this, arguments), i$ = 0, length$ = cache$.length; i$ < length$; ++i$) {
+            i = cache$[i$];
+            accum$.push(null);
+          }
+          return accum$;
+        }.call(this, []);
+        numWorkers = this.spawnWorkers();
+        if (this.options.globalPalette === true) {
+          this.renderNextFrame();
+        } else {
+          for (var cache$1 = function () {
+                var accum$1;
+                accum$1 = [];
+                for (var i$1 = 0; 0 <= numWorkers ? i$1 < numWorkers : i$1 > numWorkers; 0 <= numWorkers ? ++i$1 : --i$1)
+                  accum$1.push(i$1);
+                return accum$1;
+              }.apply(this, arguments), i$1 = 0, length$1 = cache$1.length; i$1 < length$1; ++i$1) {
+            i = cache$1[i$1];
+            this.renderNextFrame();
+          }
+        }
+        this.emit('start');
+        return this.emit('progress', 0);
+      };
+      GIF.prototype.abort = function () {
+        var worker;
+        while (true) {
+          worker = this.activeWorkers.shift();
+          if (!(null != worker))
+            break;
+          console.log('killing active worker');
+          worker.terminate();
+        }
+        this.running = false;
+        return this.emit('abort');
+      };
+      GIF.prototype.spawnWorkers = function () {
+        var numWorkers;
+        numWorkers = Math.min(this.options.workers, this.frames.length);
+        (function () {
+          var accum$;
+          accum$ = [];
+          for (var i$ = this.freeWorkers.length; this.freeWorkers.length <= numWorkers ? i$ < numWorkers : i$ > numWorkers; this.freeWorkers.length <= numWorkers ? ++i$ : --i$)
+            accum$.push(i$);
+          return accum$;
+        }.apply(this, arguments).forEach(function (this$) {
+          return function (i) {
+            var worker;
+            console.log('spawning worker ' + i);
+            worker = new Worker(this$.options.workerScript);
+            worker.onmessage = function (this$1) {
+              return function (event) {
+                this$1.activeWorkers.splice(this$1.activeWorkers.indexOf(worker), 1);
+                this$1.freeWorkers.push(worker);
+                return this$1.frameFinished(event.data);
+              };
+            }(this$);
+            return this$.freeWorkers.push(worker);
+          };
+        }(this)));
+        return numWorkers;
+      };
+      GIF.prototype.frameFinished = function (frame) {
+        var i;
+        console.log('frame ' + frame.index + ' finished - ' + this.activeWorkers.length + ' active');
+        this.finishedFrames++;
+        this.emit('progress', this.finishedFrames / this.frames.length);
+        this.imageParts[frame.index] = frame;
+        if (this.options.globalPalette === true) {
+          this.options.globalPalette = frame.globalPalette;
+          console.log('global palette analyzed');
+          if (this.frames.length > 2)
+            for (var cache$ = function () {
+                  var accum$;
+                  accum$ = [];
+                  for (var i$ = 1; 1 <= this.freeWorkers.length ? i$ < this.freeWorkers.length : i$ > this.freeWorkers.length; 1 <= this.freeWorkers.length ? ++i$ : --i$)
+                    accum$.push(i$);
+                  return accum$;
+                }.apply(this, arguments), i$ = 0, length$ = cache$.length; i$ < length$; ++i$) {
+              i = cache$[i$];
+              this.renderNextFrame();
+            }
+        }
+        if (in$(null, this.imageParts)) {
+          return this.renderNextFrame();
+        } else {
+          return this.finishRendering();
+        }
+      };
+      GIF.prototype.finishRendering = function () {
+        var data, frame, i, image, len, offset, page;
+        len = 0;
+        for (var i$ = 0, length$ = this.imageParts.length; i$ < length$; ++i$) {
+          frame = this.imageParts[i$];
+          len += (frame.data.length - 1) * frame.pageSize + frame.cursor;
+        }
+        len += frame.pageSize - frame.cursor;
+        console.log('rendering finished - filesize ' + Math.round(len / 1e3) + 'kb');
+        data = new Uint8Array(len);
+        offset = 0;
+        for (var i$1 = 0, length$1 = this.imageParts.length; i$1 < length$1; ++i$1) {
+          frame = this.imageParts[i$1];
+          for (var i$2 = 0, length$2 = frame.data.length; i$2 < length$2; ++i$2) {
+            page = frame.data[i$2];
+            i = i$2;
+            data.set(page, offset);
+            if (i === frame.data.length - 1) {
+              offset += frame.cursor;
+            } else {
+              offset += frame.pageSize;
+            }
+          }
+        }
+        image = new Blob([data], { type: 'image/gif' });
+        return this.emit('finished', image, data);
+      };
+      GIF.prototype.renderNextFrame = function () {
+        var frame, task, worker;
+        if (this.freeWorkers.length === 0)
+          throw new Error('No free workers');
+        if (this.nextFrame >= this.frames.length)
+          return;
+        frame = this.frames[this.nextFrame++];
+        worker = this.freeWorkers.shift();
+        task = this.getTask(frame);
+        console.log('starting frame ' + (task.index + 1) + ' of ' + this.frames.length);
+        this.activeWorkers.push(worker);
+        return worker.postMessage(task);
+      };
+      GIF.prototype.getContextData = function (ctx) {
+        return ctx.getImageData(0, 0, this.options.width, this.options.height).data;
+      };
+      GIF.prototype.getImageData = function (image) {
+        var ctx;
+        if (!(null != this._canvas)) {
+          this._canvas = document.createElement('canvas');
+          this._canvas.width = this.options.width;
+          this._canvas.height = this.options.height;
+        }
+        ctx = this._canvas.getContext('2d');
+        ctx.setFill = this.options.background;
+        ctx.fillRect(0, 0, this.options.width, this.options.height);
+        ctx.drawImage(image, 0, 0);
+        return this.getContextData(ctx);
+      };
+      GIF.prototype.getTask = function (frame) {
+        var index, task;
+        index = this.frames.indexOf(frame);
+        task = {
+          index: index,
+          last: index === this.frames.length - 1,
+          delay: frame.delay,
+          transparent: frame.transparent,
+          width: this.options.width,
+          height: this.options.height,
+          quality: this.options.quality,
+          dither: this.options.dither,
+          globalPalette: this.options.globalPalette,
+          repeat: this.options.repeat,
+          canTransfer: browser.name === 'chrome'
+        };
+        if (null != frame.data) {
+          task.data = frame.data;
+        } else if (null != frame.context) {
+          task.data = this.getContextData(frame.context);
+        } else if (null != frame.image) {
+          task.data = this.getImageData(frame.image);
+        } else {
+          throw new Error('Invalid frame');
+        }
+        return task;
+      };
+      return GIF;
+    }(EventEmitter);
+    module.exports = GIF;
+    function isOwn$(o, p) {
+      return {}.hasOwnProperty.call(o, p);
+    }
+    function in$(member, list) {
+      for (var i = 0, length = list.length; i < length; ++i)
+        if (i in list && list[i] === member)
+          return true;
+      return false;
+    }
+    function extends$(child, parent) {
+      for (var key in parent)
+        if (isOwn$(parent, key))
+          child[key] = parent[key];
+      function ctor() {
+        this.constructor = child;
+      }
+      ctor.prototype = parent.prototype;
+      child.prototype = new ctor;
+      child.__super__ = parent.prototype;
+      return child;
+    }
+  });
+  require.define('/browser.coffee', function (module, exports, __dirname, __filename) {
+    var browser, mode, platform, ua, UA;
+    ua = navigator.userAgent.toLowerCase();
+    platform = navigator.platform.toLowerCase();
+    UA = ua.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/) || [
+      null,
+      'unknown',
+      0
+    ];
+    mode = UA[1] === 'ie' && document.documentMode;
+    browser = {
+      name: UA[1] === 'version' ? UA[3] : UA[1],
+      version: mode || parseFloat(UA[1] === 'opera' && UA[4] ? UA[4] : UA[2]),
+      platform: { name: ua.match(/ip(?:ad|od|hone)/) ? 'ios' : (ua.match(/(?:webos|android)/) || platform.match(/mac|win|linux/) || ['other'])[0] }
+    };
+    browser[browser.name] = true;
+    browser[browser.name + parseInt(browser.version, 10)] = true;
+    browser.platform[browser.platform.name] = true;
+    module.exports = browser;
+    function isOwn$(o, p) {
+      return {}.hasOwnProperty.call(o, p);
+    }
+    function in$(member, list) {
+      for (var i = 0, length = list.length; i < length; ++i)
+        if (i in list && list[i] === member)
+          return true;
+      return false;
+    }
+    function extends$(child, parent) {
+      for (var key in parent)
+        if (isOwn$(parent, key))
+          child[key] = parent[key];
+      function ctor() {
+        this.constructor = child;
+      }
+      ctor.prototype = parent.prototype;
+      child.prototype = new ctor;
+      child.__super__ = parent.prototype;
+      return child;
+    }
+  });
+  require.define('events', function (module, exports, __dirname, __filename) {
+    if (!process.EventEmitter)
+      process.EventEmitter = function () {
+      };
+    var EventEmitter = exports.EventEmitter = process.EventEmitter;
+    var isArray = typeof Array.isArray === 'function' ? Array.isArray : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]';
+      };
+    var defaultMaxListeners = 10;
+    EventEmitter.prototype.setMaxListeners = function (n) {
+      if (!this._events)
+        this._events = {};
+      this._events.maxListeners = n;
+    };
+    EventEmitter.prototype.emit = function (type) {
+      if (type === 'error') {
+        if (!this._events || !this._events.error || isArray(this._events.error) && !this._events.error.length) {
+          if (arguments[1] instanceof Error) {
+            throw arguments[1];
+          } else {
+            throw new Error("Uncaught, unspecified 'error' event.");
+          }
+          return false;
+        }
+      }
+      if (!this._events)
+        return false;
+      var handler = this._events[type];
+      if (!handler)
+        return false;
+      if (typeof handler == 'function') {
+        switch (arguments.length) {
+        case 1:
+          handler.call(this);
+          break;
+        case 2:
+          handler.call(this, arguments[1]);
+          break;
+        case 3:
+          handler.call(this, arguments[1], arguments[2]);
+          break;
+        default:
+          var args = Array.prototype.slice.call(arguments, 1);
+          handler.apply(this, args);
+        }
+        return true;
+      } else if (isArray(handler)) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var listeners = handler.slice();
+        for (var i = 0, l = listeners.length; i < l; i++) {
+          listeners[i].apply(this, args);
+        }
+        return true;
+      } else {
+        return false;
+      }
+    };
+    EventEmitter.prototype.addListener = function (type, listener) {
+      if ('function' !== typeof listener) {
+        throw new Error('addListener only takes instances of Function');
+      }
+      if (!this._events)
+        this._events = {};
+      this.emit('newListener', type, listener);
+      if (!this._events[type]) {
+        this._events[type] = listener;
+      } else if (isArray(this._events[type])) {
+        if (!this._events[type].warned) {
+          var m;
+          if (this._events.maxListeners !== undefined) {
+            m = this._events.maxListeners;
+          } else {
+            m = defaultMaxListeners;
+          }
+          if (m && m > 0 && this._events[type].length > m) {
+            this._events[type].warned = true;
+            console.error('(node) warning: possible EventEmitter memory ' + 'leak detected. %d listeners added. ' + 'Use emitter.setMaxListeners() to increase limit.', this._events[type].length);
+            console.trace();
+          }
+        }
+        this._events[type].push(listener);
+      } else {
+        this._events[type] = [
+          this._events[type],
+          listener
+        ];
+      }
+      return this;
+    };
+    EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+    EventEmitter.prototype.once = function (type, listener) {
+      var self = this;
+      self.on(type, function g() {
+        self.removeListener(type, g);
+        listener.apply(this, arguments);
+      });
+      return this;
+    };
+    EventEmitter.prototype.removeListener = function (type, listener) {
+      if ('function' !== typeof listener) {
+        throw new Error('removeListener only takes instances of Function');
+      }
+      if (!this._events || !this._events[type])
+        return this;
+      var list = this._events[type];
+      if (isArray(list)) {
+        var i = list.indexOf(listener);
+        if (i < 0)
+          return this;
+        list.splice(i, 1);
+        if (list.length == 0)
+          delete this._events[type];
+      } else if (this._events[type] === listener) {
+        delete this._events[type];
+      }
+      return this;
+    };
+    EventEmitter.prototype.removeAllListeners = function (type) {
+      if (type && this._events && this._events[type])
+        this._events[type] = null;
+      return this;
+    };
+    EventEmitter.prototype.listeners = function (type) {
+      if (!this._events)
+        this._events = {};
+      if (!this._events[type])
+        this._events[type] = [];
+      if (!isArray(this._events[type])) {
+        this._events[type] = [this._events[type]];
+      }
+      return this._events[type];
+    };
+  });
+  global.GIF = require('/gif.coffee');
+}.call(this, this));
 // gif.js 0.1.6 - https://github.com/jnordberg/gif.js
