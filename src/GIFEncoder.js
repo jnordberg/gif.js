@@ -408,14 +408,15 @@ GIFEncoder.prototype.getImagePixels = function() {
   this.pixels = new Uint8Array(w * h * 3);
 
   var data = this.image;
+  var srcPos = 0;
   var count = 0;
 
   for (var i = 0; i < h; i++) {
     for (var j = 0; j < w; j++) {
-      var b = (i * w * 4) + j * 4;
-      this.pixels[count++] = data[b];
-      this.pixels[count++] = data[b+1];
-      this.pixels[count++] = data[b+2];
+      this.pixels[count++] = data[srcPos++];
+      this.pixels[count++] = data[srcPos++];
+      this.pixels[count++] = data[srcPos++];
+      srcPos++;
     }
   }
 };
