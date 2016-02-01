@@ -384,17 +384,15 @@ GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   var dmin = 256 * 256 * 256;
   var len = this.colorTab.length;
 
-  for (var i = 0; i < len;) {
+  for (var i = 0, index = 0; i < len; index++) {
     var dr = r - (this.colorTab[i++] & 0xff);
     var dg = g - (this.colorTab[i++] & 0xff);
-    var db = b - (this.colorTab[i] & 0xff);
+    var db = b - (this.colorTab[i++] & 0xff);
     var d = dr * dr + dg * dg + db * db;
-    var index = parseInt(i / 3);
     if ((!used || this.usedEntry[index]) && (d < dmin)) {
       dmin = d;
       minpos = index;
     }
-    i++;
   }
 
   return minpos;
