@@ -74,6 +74,7 @@ function GIFEncoder(width, height) {
   this.indexedPixels = null; // converted frame indexed to palette
   this.colorDepth = null; // number of bit planes
   this.colorTab = null; // RGB palette
+  this.neuQuant = null; // NeuQuant instance that was used to generate this.colorTab.
   this.usedEntry = new Array(); // active palette entries
   this.palSize = 7; // color table size (bits-1)
   this.dispose = -1; // disposal code (-1 = use default)
@@ -232,9 +233,9 @@ GIFEncoder.prototype.writeHeader = function() {
 */
 GIFEncoder.prototype.analyzePixels = function() {
   if (!this.colorTab) {
-    var imgq = new NeuQuant(this.pixels, this.sample);
-    imgq.buildColormap(); // create reduced palette
-    this.colorTab = imgq.getColormap();
+    this.neuQuant = new NeuQuant(this.pixels, this.sample);
+    this.neuQuant.buildColormap(); // create reduced palette
+    this.colorTab = this.neuQuant.getColormap();
   }
 
   // map image pixels to new palette
@@ -378,6 +379,10 @@ GIFEncoder.prototype.findClosest = function(c, used) {
 GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   if (this.colorTab === null) return -1;
 
+  if (this.neuQuant && !used) {
+    return this.neuQuant.lookupRGB(r, g, b);
+  }
+  
   var c = b | (g << 8) | (r << 16);
 
   var minpos = 0;
