@@ -144,7 +144,7 @@ GIFEncoder.prototype.setTransparent = function(color) {
 GIFEncoder.prototype.addFrame = function(imageData) {
   this.image = imageData;
 
-  this.colorTab = this.globalPalette.slice ? this.globalPalette : null;
+  this.colorTab = this.globalPalette && this.globalPalette.slice ? this.globalPalette : null;
 
   this.getImagePixels(); // convert to correct format if necessary
   this.analyzePixels(); // build color table & map pixels
@@ -217,7 +217,7 @@ GIFEncoder.prototype.setGlobalPalette = function(palette) {
   calculated palette after the first frame is added.
 */
 GIFEncoder.prototype.getGlobalPalette = function() {
-  return (this.globalPalette.slice && this.globalPalette.slice(0)) || this.globalPalette;
+  return (this.globalPalette && this.globalPalette.slice && this.globalPalette.slice(0)) || this.globalPalette;
 };
 
 /*
