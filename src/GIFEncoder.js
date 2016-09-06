@@ -74,6 +74,7 @@ function GIFEncoder(width, height) {
   this.indexedPixels = null; // converted frame indexed to palette
   this.colorDepth = null; // number of bit planes
   this.colorTab = null; // RGB palette
+  this.neuQuant = null; // NeuQuant instance that was used to generate this.colorTab.
   this.usedEntry = new Array(); // active palette entries
   this.palSize = 7; // color table size (bits-1)
   this.dispose = -1; // disposal code (-1 = use default)
@@ -144,7 +145,7 @@ GIFEncoder.prototype.setTransparent = function(color) {
 GIFEncoder.prototype.addFrame = function(imageData) {
   this.image = imageData;
 
-  this.colorTab = this.globalPalette.slice ? this.globalPalette : null;
+  this.colorTab = this.globalPalette && this.globalPalette.slice ? this.globalPalette : null;
 
   this.getImagePixels(); // convert to correct format if necessary
   this.analyzePixels(); // build color table & map pixels
@@ -217,7 +218,7 @@ GIFEncoder.prototype.setGlobalPalette = function(palette) {
   calculated palette after the first frame is added.
 */
 GIFEncoder.prototype.getGlobalPalette = function() {
-  return (this.globalPalette.slice && this.globalPalette.slice(0)) || this.globalPalette;
+  return (this.globalPalette && this.globalPalette.slice && this.globalPalette.slice(0)) || this.globalPalette;
 };
 
 /*
@@ -232,9 +233,9 @@ GIFEncoder.prototype.writeHeader = function() {
 */
 GIFEncoder.prototype.analyzePixels = function() {
   if (!this.colorTab) {
-    var imgq = new NeuQuant(this.pixels, this.sample);
-    imgq.buildColormap(); // create reduced palette
-    this.colorTab = imgq.getColormap();
+    this.neuQuant = new NeuQuant(this.pixels, this.sample);
+    this.neuQuant.buildColormap(); // create reduced palette
+    this.colorTab = this.neuQuant.getColormap();
   }
 
   // map image pixels to new palette
@@ -378,23 +379,25 @@ GIFEncoder.prototype.findClosest = function(c, used) {
 GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   if (this.colorTab === null) return -1;
 
+  if (this.neuQuant && !used) {
+    return this.neuQuant.lookupRGB(r, g, b);
+  }
+  
   var c = b | (g << 8) | (r << 16);
 
   var minpos = 0;
   var dmin = 256 * 256 * 256;
   var len = this.colorTab.length;
 
-  for (var i = 0; i < len;) {
+  for (var i = 0, index = 0; i < len; index++) {
     var dr = r - (this.colorTab[i++] & 0xff);
     var dg = g - (this.colorTab[i++] & 0xff);
-    var db = b - (this.colorTab[i] & 0xff);
+    var db = b - (this.colorTab[i++] & 0xff);
     var d = dr * dr + dg * dg + db * db;
-    var index = parseInt(i / 3);
     if ((!used || this.usedEntry[index]) && (d < dmin)) {
       dmin = d;
       minpos = index;
     }
-    i++;
   }
 
   return minpos;
@@ -410,14 +413,15 @@ GIFEncoder.prototype.getImagePixels = function() {
   this.pixels = new Uint8Array(w * h * 3);
 
   var data = this.image;
+  var srcPos = 0;
   var count = 0;
 
   for (var i = 0; i < h; i++) {
     for (var j = 0; j < w; j++) {
-      var b = (i * w * 4) + j * 4;
-      this.pixels[count++] = data[b];
-      this.pixels[count++] = data[b+1];
-      this.pixels[count++] = data[b+2];
+      this.pixels[count++] = data[srcPos++];
+      this.pixels[count++] = data[srcPos++];
+      this.pixels[count++] = data[srcPos++];
+      srcPos++;
     }
   }
 };

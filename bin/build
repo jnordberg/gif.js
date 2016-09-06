@@ -12,7 +12,6 @@ if [ -f ./node_modules/.bin/cjsify ]; then
     --source-map ./dist/gif.js.map \
     --output ./dist/gif.js \
     --inline-sources \
-    --minify \
     gif.coffee
   echo -e "\n// gif.js $VERSION - $URL" >> ./dist/gif.js
   ./node_modules/.bin/cjsify \
@@ -21,7 +20,6 @@ if [ -f ./node_modules/.bin/cjsify ]; then
     --source-map ./dist/gif.worker.js.map \
     --output ./dist/gif.worker.js \
     --inline-sources \
-    --minify \
     gif.worker.coffee
   echo -e "\n// gif.worker.js $VERSION - $URL" >> ./dist/gif.worker.js
   exit $?
