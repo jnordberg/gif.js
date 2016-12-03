@@ -12,7 +12,7 @@ class GIF extends EventEmitter
     width: null # size derermined from first frame if possible
     height: null
     transparent: null
-    debug: true
+    debug: false
 
   frameDefaults =
     delay: 500 # ms
@@ -91,7 +91,7 @@ class GIF extends EventEmitter
     loop
       worker = @activeWorkers.shift()
       break unless worker?
-      this.log "killing active worker"
+      @log 'killing active worker'
       worker.terminate()
     @running = false
     @emit 'abort'
@@ -101,7 +101,7 @@ class GIF extends EventEmitter
   spawnWorkers: ->
     numWorkers = Math.min(@options.workers, @frames.length)
     [@freeWorkers.length...numWorkers].forEach (i) =>
-      this.log "spawning worker #{ i }"
+      @log "spawning worker #{ i }"
       worker = new Worker @options.workerScript
       worker.onmessage = (event) =>
         @activeWorkers.splice @activeWorkers.indexOf(worker), 1
@@ -111,14 +111,14 @@ class GIF extends EventEmitter
     return numWorkers
 
   frameFinished: (frame) ->
-    this.log "frame #{ frame.index } finished - #{ @activeWorkers.length } active"
+    @log "frame #{ frame.index } finished - #{ @activeWorkers.length } active"
     @finishedFrames++
     @emit 'progress', @finishedFrames / @frames.length
     @imageParts[frame.index] = frame
     # remember calculated palette, spawn the rest of the workers
     if @options.globalPalette == true
       @options.globalPalette = frame.globalPalette
-      this.log "global palette analyzed"
+      @log 'global palette analyzed'
       @renderNextFrame() for i in [1...@freeWorkers.length] if @frames.length > 2
     if null in @imageParts
       @renderNextFrame()
@@ -130,7 +130,7 @@ class GIF extends EventEmitter
     for frame in @imageParts
       len += (frame.data.length - 1) * frame.pageSize + frame.cursor
     len += frame.pageSize - frame.cursor
-    this.log "rendering finished - filesize #{ Math.round(len / 1000) }kb"
+    @log "rendering finished - filesize #{ Math.round(len / 1000) }kb"
     data = new Uint8Array len
     offset = 0
     for frame in @imageParts
@@ -154,7 +154,7 @@ class GIF extends EventEmitter
     worker = @freeWorkers.shift()
     task = @getTask frame
 
-    this.log "starting frame #{ task.index + 1 } of #{ @frames.length }"
+    @log "starting frame #{ task.index + 1 } of #{ @frames.length }"
     @activeWorkers.push worker
     worker.postMessage task#, [task.data.buffer]
 
@@ -200,9 +200,9 @@ class GIF extends EventEmitter
 
     return task
 
-  log: () ->
-    return if not @options.debug
-    args = Array::slice.call(arguments)
-    console.log.apply console, args
+  log: (args...) ->
+    return unless @options.debug
+    console.log args...
+
 
 module.exports = GIF
