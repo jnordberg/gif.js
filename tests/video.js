@@ -1,82 +1,4 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-(function() {
-  var now, ready, _ref, _ref1;
-
-  require('../scripts/vendor/mootools.js');
-
-  ready = require('../scripts/vendor/ready.js');
-
-  now = ((_ref = window.performance) != null ? (_ref1 = _ref.now) != null ? _ref1.bind(window.performance) : void 0 : void 0) || Date.now;
-
-  ready(function() {
-    var button, capture, gif, info, sample, sampleInterval, sampleUpdate, startTime, timer, video;
-
-    info = document.id('info');
-    video = document.id('video');
-    button = document.id('go');
-    sample = document.id('sample');
-    gif = new GIF({
-      workers: 4,
-      workerScript: '/gif.js/gif.worker.js',
-      width: 600,
-      height: 337
-    });
-    startTime = null;
-    sampleInterval = null;
-    sampleUpdate = function() {
-      sampleInterval = parseInt(sample.value);
-      gif.abort();
-      return document.id('info').set('text', "ready to start with a sample interval of " + sampleInterval + "ms");
-    };
-    video.addEventListener('canplay', function() {
-      button.disabled = false;
-      sample.disabled = false;
-      return sampleUpdate();
-    });
-    sample.addEvent('change', sampleUpdate);
-    button.addEvent('click', function() {
-      video.pause();
-      video.currentTime = 0;
-      gif.abort();
-      gif.frames = [];
-      return video.play();
-    });
-    gif.on('start', function() {
-      return startTime = now();
-    });
-    gif.on('progress', function(p) {
-      return info.set('text', "rendering: " + (Math.round(p * 100)) + "%");
-    });
-    gif.on('finished', function(blob) {
-      var delta, img;
-
-      img = document.id('result');
-      img.src = URL.createObjectURL(blob);
-      delta = now() - startTime;
-      return info.set('text', "done in\n" + ((delta / 1000).toFixed(2)) + "sec,\nsize " + ((blob.size / 1000).toFixed(2)) + "kb");
-    });
-    timer = null;
-    capture = function() {
-      info.set('html', "capturing at " + video.currentTime);
-      return gif.addFrame(video, {
-        copy: true,
-        delay: sampleInterval
-      });
-    };
-    video.addEventListener('play', function() {
-      clearInterval(timer);
-      return timer = setInterval(capture, sampleInterval);
-    });
-    return video.addEventListener('ended', function() {
-      clearInterval(timer);
-      return gif.render();
-    });
-  });
-
-}).call(this);
-
-
-},{"../scripts/vendor/mootools.js":2,"../scripts/vendor/ready.js":3}],2:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function(){
 
 this.MooTools = {
@@ -4138,7 +4060,7 @@ Element.alias({position: 'setPosition'}); //compatability
 
 });
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /*!
   * domready (c) Dustin Diaz 2012 - License MIT
   */
@@ -4194,5 +4116,77 @@ Element.alias({position: 'setPosition'}); //compatability
     })
 })
 
-},{}]},{},[1])
-;
+},{}],3:[function(require,module,exports){
+var now, ready, ref, ref1;
+
+require('../scripts/vendor/mootools.js');
+
+ready = require('../scripts/vendor/ready.js');
+
+now = ((ref = window.performance) != null ? (ref1 = ref.now) != null ? ref1.bind(window.performance) : void 0 : void 0) || Date.now;
+
+ready(function() {
+  var button, capture, gif, info, sample, sampleInterval, sampleUpdate, startTime, timer, video;
+  info = document.id('info');
+  video = document.id('video');
+  button = document.id('go');
+  sample = document.id('sample');
+  gif = new GIF({
+    workers: 4,
+    workerScript: '/gif.js/gif.worker.js',
+    width: 600,
+    height: 337
+  });
+  startTime = null;
+  sampleInterval = null;
+  sampleUpdate = function() {
+    sampleInterval = parseInt(sample.value);
+    gif.abort();
+    return document.id('info').set('text', "ready to start with a sample interval of " + sampleInterval + "ms");
+  };
+  video.addEventListener('canplay', function() {
+    button.disabled = false;
+    sample.disabled = false;
+    return sampleUpdate();
+  });
+  sample.addEvent('change', sampleUpdate);
+  button.addEvent('click', function() {
+    video.pause();
+    video.currentTime = 0;
+    gif.abort();
+    gif.frames = [];
+    return video.play();
+  });
+  gif.on('start', function() {
+    return startTime = now();
+  });
+  gif.on('progress', function(p) {
+    return info.set('text', "rendering: " + (Math.round(p * 100)) + "%");
+  });
+  gif.on('finished', function(blob) {
+    var delta, img;
+    img = document.id('result');
+    img.src = URL.createObjectURL(blob);
+    delta = now() - startTime;
+    return info.set('text', "done in\n" + ((delta / 1000).toFixed(2)) + "sec,\nsize " + ((blob.size / 1000).toFixed(2)) + "kb");
+  });
+  timer = null;
+  capture = function() {
+    info.set('html', "capturing at " + video.currentTime);
+    return gif.addFrame(video, {
+      copy: true,
+      delay: sampleInterval
+    });
+  };
+  video.addEventListener('play', function() {
+    clearInterval(timer);
+    return timer = setInterval(capture, sampleInterval);
+  });
+  return video.addEventListener('ended', function() {
+    clearInterval(timer);
+    return gif.render();
+  });
+});
+
+
+},{"../scripts/vendor/mootools.js":1,"../scripts/vendor/ready.js":2}]},{},[3]);

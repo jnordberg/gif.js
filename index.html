@@ -49,11 +49,12 @@ gif.addFrame(canvasElement, {delay: <span class="number">200</span>});
 <span class="comment">// or copy the pixels from a canvas context</span>
 gif.addFrame(ctx, {copy: <span class="literal">true</span>});
 
-gif.on(<span class="string">'finished'</span>, <span class="keyword">function</span>(blob) {
-  window.open(URL.createObjectURL(blob));
+gif.on(<span class="string">'finished'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">blob</span>) </span>{
+  <span class="built_in">window</span>.open(URL.createObjectURL(blob));
 });
 
-gif.render();</code></pre>
+gif.render();
+</code></pre>
 
 
   <h2>Demo</h2>
@@ -96,6 +97,20 @@ gif.render();</code></pre>
         <input type="range" step="1" min="0" max="21" value="21">
         <span class="value">forever</span>
       </p>
+      <p class="dither">
+        <label>Dither</label>
+        <select>
+          <option selected>None</option>
+          <option>Atkinson</option>
+          <option>Atkinson-serpentine </option>
+          <option>FalseFloydSteinberg</option>
+          <option>FalseFloydSteinberg-serpentine</option>
+          <option>FloydSteinberg</option>
+          <option>FloydSteinberg-serpentine</option>
+          <option>Stucki</option>
+          <option>Stucki-serpentine</option>
+        </select>
+      </p>
       <p class="info">
         <pre>Loading...</pre>
       </p>
@@ -118,6 +133,20 @@ gif.render();</code></pre>
         <input type="range" step="1" min="1" max="30" value="20">
         <span class="value">10</span>
       </p>
+      <p class="dither">
+        <label>Dither</label>
+        <select>
+          <option selected>None</option>
+          <option>Atkinson</option>
+          <option>Atkinson-serpentine </option>
+          <option>FalseFloydSteinberg</option>
+          <option>FalseFloydSteinberg-serpentine</option>
+          <option>FloydSteinberg</option>
+          <option>FloydSteinberg-serpentine</option>
+          <option>Stucki</option>
+          <option>Stucki-serpentine</option>
+        </select>
+      </p>
       <p class="info">
         <pre>Loading...</pre>
       </p>
@@ -139,6 +168,20 @@ gif.render();</code></pre>
         <label>Quality</label>
         <input type="range" step="1" min="1" max="30" value="20">
         <span class="value">10</span>
+      </p>
+      <p class="dither">
+        <label>Dither</label>
+        <select>
+          <option selected>None</option>
+          <option>Atkinson</option>
+          <option>Atkinson-serpentine </option>
+          <option>FalseFloydSteinberg</option>
+          <option>FalseFloydSteinberg-serpentine</option>
+          <option>FloydSteinberg</option>
+          <option>FloydSteinberg-serpentine</option>
+          <option>Stucki</option>
+          <option>Stucki-serpentine</option>
+        </select>
       </p>
       <p class="info">
         <pre>Loading...</pre>

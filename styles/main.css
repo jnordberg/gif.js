@@ -221,7 +221,7 @@ footer,
 }
 .demo .images img.render {
   display: block;
-  background: #ffffff url(../images/loading.gif) no-repeat center center;
+  background: #fff url(../images/loading.gif) no-repeat center center;
 }
 .demo.original .images img.original {
   display: block;

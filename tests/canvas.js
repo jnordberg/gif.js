@@ -1,105 +1,4 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-(function() {
-  var height, hsl, now, num_frames, ready, rgb, text, textSize, width, _ref, _ref1,
-    __slice = [].slice;
-
-  require('../scripts/vendor/mootools.js');
-
-  ready = require('../scripts/vendor/ready.js');
-
-  num_frames = 20;
-
-  width = 600;
-
-  height = 300;
-
-  text = 'HYPNO TOAD';
-
-  textSize = 70;
-
-  now = ((_ref = window.performance) != null ? (_ref1 = _ref.now) != null ? _ref1.bind(window.performance) : void 0 : void 0) || Date.now;
-
-  rgb = function() {
-    var rgb;
-
-    rgb = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return "rgb(" + (rgb.map(function(v) {
-      return Math.floor(v * 255);
-    }).join(',')) + ")";
-  };
-
-  hsl = function() {
-    var hsl;
-
-    hsl = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    hsl = hsl.map(function(v, i) {
-      if (i === 0) {
-        return v * 360;
-      } else {
-        return "" + (v * 100) + "%";
-      }
-    });
-    return "hsl(" + (hsl.join(',')) + ")";
-  };
-
-  ready(function() {
-    var canvas, ctx, gif, grad, h2, i, info, p, startTime, w2, _i;
-
-    canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    startTime = null;
-    ctx = canvas.getContext('2d');
-    info = document.id('info');
-    gif = new GIF({
-      workers: 4,
-      workerScript: '/gif.js/gif.worker.js',
-      width: width,
-      height: height
-    });
-    gif.on('start', function() {
-      return startTime = now();
-    });
-    gif.on('progress', function(p) {
-      return info.set('text', Math.round(p * 100) + '%');
-    });
-    gif.on('finished', function(blob) {
-      var delta, img;
-
-      img = document.id('result');
-      img.src = URL.createObjectURL(blob);
-      delta = now() - startTime;
-      return info.set('text', "100%\n" + ((delta / 1000).toFixed(2)) + "sec\n" + ((blob.size / 1000).toFixed(2)) + "kb");
-    });
-    ctx.font = "bold " + textSize + "px Helvetica";
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineWidth = 3;
-    w2 = width / 2;
-    h2 = height / 2;
-    for (i = _i = 0; 0 <= num_frames ? _i < num_frames : _i > num_frames; i = 0 <= num_frames ? ++_i : --_i) {
-      p = i / (num_frames - 1);
-      grad = ctx.createRadialGradient(w2, h2, 0, w2, h2, w2);
-      grad.addColorStop(0, hsl(p, 1, 0.5));
-      grad.addColorStop(1, hsl((p + 0.2) % 1, 1, 0.4));
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = hsl((p + 0.5) % 1, 1, 0.7);
-      ctx.strokeStyle = hsl((p + 0.8) % 1, 1, 0.9);
-      ctx.fillText(text, w2, h2);
-      ctx.strokeText(text, w2, h2);
-      gif.addFrame(ctx, {
-        copy: true,
-        delay: 20
-      });
-    }
-    return gif.render();
-  });
-
-}).call(this);
-
-
-},{"../scripts/vendor/mootools.js":2,"../scripts/vendor/ready.js":3}],2:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function(){
 
 this.MooTools = {
@@ -4161,7 +4060,7 @@ Element.alias({position: 'setPosition'}); //compatability
 
 });
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /*!
   * domready (c) Dustin Diaz 2012 - License MIT
   */
@@ -4217,5 +4116,98 @@ Element.alias({position: 'setPosition'}); //compatability
     })
 })
 
-},{}]},{},[1])
-;
+},{}],3:[function(require,module,exports){
+var height, hsl, now, num_frames, ready, ref, ref1, rgb, text, textSize, width,
+  slice = [].slice;
+
+require('../scripts/vendor/mootools.js');
+
+ready = require('../scripts/vendor/ready.js');
+
+num_frames = 20;
+
+width = 600;
+
+height = 300;
+
+text = 'HYPNO TOAD';
+
+textSize = 70;
+
+now = ((ref = window.performance) != null ? (ref1 = ref.now) != null ? ref1.bind(window.performance) : void 0 : void 0) || Date.now;
+
+rgb = function() {
+  var rgb;
+  rgb = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+  return "rgb(" + (rgb.map(function(v) {
+    return Math.floor(v * 255);
+  }).join(',')) + ")";
+};
+
+hsl = function() {
+  var hsl;
+  hsl = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+  hsl = hsl.map(function(v, i) {
+    if (i === 0) {
+      return v * 360;
+    } else {
+      return (v * 100) + "%";
+    }
+  });
+  return "hsl(" + (hsl.join(',')) + ")";
+};
+
+ready(function() {
+  var canvas, ctx, gif, grad, h2, i, info, j, p, ref2, startTime, w2;
+  canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  startTime = null;
+  ctx = canvas.getContext('2d');
+  info = document.id('info');
+  gif = new GIF({
+    workers: 4,
+    workerScript: '/gif.js/gif.worker.js',
+    width: width,
+    height: height
+  });
+  gif.on('start', function() {
+    return startTime = now();
+  });
+  gif.on('progress', function(p) {
+    return info.set('text', Math.round(p * 100) + '%');
+  });
+  gif.on('finished', function(blob) {
+    var delta, img;
+    img = document.id('result');
+    img.src = URL.createObjectURL(blob);
+    delta = now() - startTime;
+    return info.set('text', "100%\n" + ((delta / 1000).toFixed(2)) + "sec\n" + ((blob.size / 1000).toFixed(2)) + "kb");
+  });
+  ctx.font = "bold " + textSize + "px Helvetica";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 3;
+  w2 = width / 2;
+  h2 = height / 2;
+  for (i = j = 0, ref2 = num_frames; 0 <= ref2 ? j < ref2 : j > ref2; i = 0 <= ref2 ? ++j : --j) {
+    p = i / (num_frames - 1);
+    grad = ctx.createRadialGradient(w2, h2, 0, w2, h2, w2);
+    grad.addColorStop(0, hsl(p, 1, 0.5));
+    grad.addColorStop(1, hsl((p + 0.2) % 1, 1, 0.4));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = hsl((p + 0.5) % 1, 1, 0.7);
+    ctx.strokeStyle = hsl((p + 0.8) % 1, 1, 0.9);
+    ctx.fillText(text, w2, h2);
+    ctx.strokeText(text, w2, h2);
+    gif.addFrame(ctx, {
+      copy: true,
+      delay: 20
+    });
+  }
+  return gif.render();
+});
+
+
+},{"../scripts/vendor/mootools.js":1,"../scripts/vendor/ready.js":2}]},{},[3]);
