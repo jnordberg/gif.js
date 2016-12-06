@@ -13,6 +13,7 @@ class GIF extends EventEmitter
     height: null
     transparent: null
     debug: false
+    dither: false # see GIFEncoder.js for dithering options
 
   frameDefaults =
     delay: 500 # ms
