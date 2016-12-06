@@ -10,6 +10,9 @@
   "require": {
     "hljs": "highlight.js"
   },
+  "nunjucks": {
+    "autoescape": false
+  },
   "plugins": [
     "wintersmith-browserify",
     "wintersmith-less",

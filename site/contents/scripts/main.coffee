@@ -39,6 +39,7 @@ setupDemo = (element) ->
   logel = element.getElement 'pre'
 
   gif = new GIF
+    debug: true
     quality: 10
     workers: 2
 
@@ -67,6 +68,11 @@ setupDemo = (element) ->
     val = 31 - parseInt qslider.value
     qvalue.set 'text', val
     gif.setOption 'quality', val
+    gif.abort()
+    gif.render()
+
+  (element.getElement '.dither select')?.addEvent 'change', ->
+    gif.setOption 'dither', if @value is 'None' then false else @value
     gif.abort()
     gif.render()
 
