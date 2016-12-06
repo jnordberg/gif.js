@@ -6,7 +6,10 @@
   "main": "index.js",
   "repository": "https://github.com/jnordberg/gif.js.git",
   "devDependencies": {
-    "commonjs-everywhere": "~0.9.4"
+    "browserify": "^13.1.1",
+    "coffeeify": "^2.1.0",
+    "exorcist": "^0.4.0",
+    "uglify-js": "^2.7.5"
   },
   "scripts": {
     "prepublish": "./bin/build"

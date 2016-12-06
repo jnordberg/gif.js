@@ -3,29 +3,26 @@
 URL="https://github.com/jnordberg/gif.js"
 TMP="./dist/tmp"
 
-if [ -f ./node_modules/.bin/cjsify ]; then
+if [ -d ./node_modules ]; then
+  PATH="./node_modules/.bin/:$PATH"
   VERSION=`./bin/version`
   echo "Packaging gif.js $VERSION"
-  ./node_modules/.bin/cjsify \
-    --export GIF \
-    --root ./src/ \
-    --source-map ./dist/gif.js.map \
-    --output ./dist/gif.js \
-    --inline-sources \
-    --minify \
-    gif.coffee
-  echo -e "\n// gif.js $VERSION - $URL" >> ./dist/gif.js
-  ./node_modules/.bin/cjsify \
-    --root ./src/ \
-    --no-node \
-    --source-map ./dist/gif.worker.js.map \
-    --output ./dist/gif.worker.js \
-    --inline-sources \
-    --minify \
-    gif.worker.coffee
-  echo -e "\n// gif.worker.js $VERSION - $URL" >> ./dist/gif.worker.js
-  exit $?
+  browserify -d -s GIF -t coffeeify src/gif.coffee | exorcist dist/_gif.js.map > dist/_gif.js
+  uglifyjs dist/_gif.js \
+    --preamble "// gif.js $VERSION - $URL" \
+    --in-source-map dist/_gif.js.map \
+    --source-map dist/gif.js.map \
+    --source-map-url gif.js.map \
+    > dist/gif.js
+  browserify -d -t coffeeify --bare src/gif.worker.coffee | exorcist dist/_gif.worker.js.map > dist/_gif.worker.js
+  uglifyjs dist/_gif.worker.js \
+    --preamble "// gif.worker.js $VERSION - $URL" \
+    --in-source-map dist/_gif.worker.js.map \
+    --source-map dist/gif.worker.js.map \
+    --source-map-url gif.worker.js.map \
+    > dist/gif.worker.js
+  rm dist/_*
 else
-  echo "Dependencies missing. Run npm install"
+  echo "Build dependencies missing. Run npm install"
   exit 1
 fi
