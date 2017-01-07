@@ -112,7 +112,7 @@ class GIF extends EventEmitter
     return numWorkers
 
   frameFinished: (frame) ->
-    @log "frame #{ frame.index } finished - #{ @activeWorkers.length } active"
+    @log "frame #{ frame.index + 1 } finished - #{ @activeWorkers.length } active"
     @finishedFrames++
     @emit 'progress', @finishedFrames / @frames.length
     @imageParts[frame.index] = frame
