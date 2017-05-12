@@ -18,6 +18,7 @@ class GIF extends EventEmitter
   frameDefaults =
     delay: 500 # ms
     copy: false
+    dispose: -1
 
   constructor: (options) ->
     @running = false
@@ -181,6 +182,7 @@ class GIF extends EventEmitter
       index: index
       last: index is (@frames.length - 1)
       delay: frame.delay
+      dispose: frame.dispose
       transparent: frame.transparent
       width: @options.width
       height: @options.height

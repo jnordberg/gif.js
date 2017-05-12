@@ -9,6 +9,7 @@ renderFrame = (frame) ->
     encoder.firstFrame = false
 
   encoder.setTransparent frame.transparent
+  encoder.setDispose frame.dispose
   encoder.setRepeat frame.repeat
   encoder.setDelay frame.delay
   encoder.setQuality frame.quality
