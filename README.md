@@ -71,7 +71,9 @@ You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 | -------------|-----------------|----------------------------------------------------|
 | delay        | `500`           | frame delay                                        |
 | copy         | `false`         | copy the pixel data                                |
+| dispose      | `-1`            | frame disposal code. See [GIF89a Spec][gif89aspec] |
 
+[gif89aspec]: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
 
 ## Acknowledgements
 
