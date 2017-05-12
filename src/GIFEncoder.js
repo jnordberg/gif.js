@@ -382,7 +382,7 @@ GIFEncoder.prototype.findClosestRGB = function(r, g, b, used) {
   if (this.neuQuant && !used) {
     return this.neuQuant.lookupRGB(r, g, b);
   }
-  
+
   var c = b | (g << 8) | (r << 16);
 
   var minpos = 0;
@@ -444,7 +444,7 @@ GIFEncoder.prototype.writeGraphicCtrlExt = function() {
   }
 
   if (this.dispose >= 0) {
-    disp = dispose & 7; // user override
+    disp = this.dispose & 7; // user override
   }
   disp <<= 2;
 
