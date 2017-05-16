@@ -1,0 +1,20 @@
+{
+  "name": "gif.js",
+  "version": "0.1.4",
+  "authors": [
+    "jnordberg"
+  ],
+  "description": "JavaScript GIF encoder that runs in your browser.",
+  "main": "./dist/gif.js",
+  "keywords": [
+    "gif",
+    "animation",
+    "encoder",
+    "javascript"
+  ],
+  "license": "MIT",
+  "homepage": "http://bower.io/",
+  "ignore": [
+    "**/.*"
+  ]
+}
