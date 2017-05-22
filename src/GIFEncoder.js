@@ -7,7 +7,7 @@
   Johan Nordberg (JS version - code@johan-nordberg.com)
 */
 
-var NeuQuant = require('./TypedNeuQuant.js');
+var NeuQuant = require('./WasmNeuQuant.js');
 var LZWEncoder = require('./LZWEncoder.js');
 
 function ByteArray() {

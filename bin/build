@@ -7,6 +7,7 @@ if [ -d ./node_modules ]; then
   PATH="./node_modules/.bin/:$PATH"
   VERSION=`./bin/version`
   echo "Packaging gif.js $VERSION"
+  wa compile src/NeuQuant.c -O --out src/NeuQuant.wasm
   browserify -d -s GIF -t coffeeify src/gif.coffee | exorcist dist/_gif.js.map > dist/_gif.js
   uglifyjs dist/_gif.js \
     --preamble "// gif.js $VERSION - $URL" \
@@ -14,7 +15,7 @@ if [ -d ./node_modules ]; then
     --source-map dist/gif.js.map \
     --source-map-url gif.js.map \
     > dist/gif.js
-  browserify -d -t coffeeify --bare src/gif.worker.coffee | exorcist dist/_gif.worker.js.map > dist/_gif.worker.js
+  browserify -d -t coffeeify -t brfs src/gif.worker.coffee | exorcist dist/_gif.worker.js.map > dist/_gif.worker.js
   uglifyjs dist/_gif.worker.js \
     --preamble "// gif.worker.js $VERSION - $URL" \
     --in-source-map dist/_gif.worker.js.map \
