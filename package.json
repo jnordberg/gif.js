@@ -1,6 +1,6 @@
 {
   "name": "gif.js",
-  "version": "0.2.0",
+  "version": "0.2.0-wasm",
   "description": "JavaScript GIF encoding library",
   "author": "Johan Nordberg <code@johan-nordberg.com>",
   "main": "index.js",
