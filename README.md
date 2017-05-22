@@ -1,4 +1,7 @@
 
+# ![WARNING](http://madsenworld.dk/anigif/light/blinkdio.gif) EXPERIMENTAL WEBASSEMBLY BUILD ![WARNING](http://madsenworld.dk/anigif/light/blinkdio.gif)
+
+
 # gif.js
 
 JavaScript GIF encoder that runs in your browser.
