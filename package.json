@@ -12,9 +12,7 @@
     "uglify-js": "^2.7.5"
   },
   "scripts": {
-    "prepublish": "./bin/build",
-    "dev": "coffee -o ./lib  -wc ./src/*.coffee",
-    "web": "webpack-dev-server --inline --inline --hot --progress --colors "
+    "prepublish": "./bin/build"
   },
   "browser": "./dist/gif.js",
   "keywords": [
