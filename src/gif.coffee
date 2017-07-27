@@ -170,12 +170,25 @@ class GIF extends EventEmitter
       @_canvas.height = @options.height
 
     ctx = @_canvas.getContext '2d'
-    ctx.setFill = @options.background
+    ctx.clearRect 0, 0, @options.width, @options.height
+    ctx.fillStyle = @options.background
     ctx.fillRect 0, 0, @options.width, @options.height
+    if image instanceof ImageData
+      ctx.putImageData image, 0, 0
+      return image
     ctx.drawImage image, 0, 0
-
     return @getContextData ctx
 
+  getBgImageData:  -> 
+    bg_canvas = document.createElement 'canvas'
+    bg_canvas.width = @options.width
+    bg_canvas.height = @options.height
+    bg_ctx = bg_canvas.getContext '2d'
+    bg_ctx.fillStyle = '#ffffff';
+    bg_ctx.fillRect 0, 0, @options.width, @options.height
+    bg_ctx.drawImage @_canvas, 0, 0
+    return @getContextData bg_ctx
+  
   getTask: (frame) ->
     index = @frames.indexOf frame
     task =
@@ -194,10 +207,14 @@ class GIF extends EventEmitter
 
     if frame.data?
       task.data = frame.data
+      task.data = @getContextData frame.data
+      task.bg_data = @getBgImageData()
     else if frame.context?
       task.data = @getContextData frame.context
+      task.bg_data = @getBgImageData()
     else if frame.image?
       task.data = @getImageData frame.image
+      task.bg_data = @getBgImageData()
     else
       throw new Error 'Invalid frame'
 

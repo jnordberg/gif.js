@@ -1,2 +1,10 @@
 node_modules
+
+#add
 site/build/
+lib/
+index.html
+web/
+webpack.config.js
+build/
+images/*

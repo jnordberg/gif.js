@@ -69,7 +69,8 @@ function GIFEncoder(width, height) {
   // frame delay (hundredths)
   this.delay = 0;
 
-  this.image = null; // current frame
+  this.image = null; // current frame with white background
+  this.no_bg_image = null; //current frame
   this.pixels = null; // BGR byte array from frame
   this.indexedPixels = null; // converted frame indexed to palette
   this.colorDepth = null; // number of bit planes
@@ -142,9 +143,9 @@ GIFEncoder.prototype.setTransparent = function(color) {
   actually deferred until the next frame is received so that timing
   data can be inserted.  Invoking finish() flushes all frames.
 */
-GIFEncoder.prototype.addFrame = function(imageData) {
-  this.image = imageData;
-
+GIFEncoder.prototype.addFrame = function(imageData, bgImageData) {
+  this.image = bgImageData;
+  this.no_bg_image = imageData;
   this.colorTab = this.globalPalette && this.globalPalette.slice ? this.globalPalette : null;
 
   this.getImagePixels(); // convert to correct format if necessary
@@ -232,6 +233,9 @@ GIFEncoder.prototype.writeHeader = function() {
   Analyzes current frame colors and creates color map.
 */
 GIFEncoder.prototype.analyzePixels = function() {
+  var len = this.pixels.length;
+  var nPix = len / 3;
+
   if (!this.colorTab) {
     this.neuQuant = new NeuQuant(this.pixels, this.sample);
     this.neuQuant.buildColormap(); // create reduced palette
@@ -252,6 +256,13 @@ GIFEncoder.prototype.analyzePixels = function() {
   // get closest match to transparent color if specified
   if (this.transparent !== null) {
     this.transIndex = this.findClosest(this.transparent, true);
+    for (var pixelIndex = 0; pixelIndex < nPix; pixelIndex++) {
+
+      if (this.no_bg_image[pixelIndex * 4 + 3] == 0) {
+
+        this.indexedPixels[pixelIndex] = this.transIndex;
+      }
+    }
   }
 };
 
