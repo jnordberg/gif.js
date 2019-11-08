@@ -172,7 +172,7 @@ class GIF extends EventEmitter
     ctx = @_canvas.getContext '2d'
     ctx.fillStyle = @options.background
     ctx.fillRect 0, 0, @options.width, @options.height
-    ctx.drawImage image, 0, 0
+    ctx.drawImage image, 0, 0, @options.width, @options.height
 
     return @getContextData ctx
 
