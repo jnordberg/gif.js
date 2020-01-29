@@ -131,16 +131,17 @@ class GIF extends EventEmitter
     len = 0
     for frame in @imageParts
       len += (frame.data.length - 1) * frame.pageSize + frame.cursor
-    len += frame.pageSize - frame.cursor
+
     @log "rendering finished - filesize #{ Math.round(len / 1000) }kb"
     data = new Uint8Array len
     offset = 0
     for frame in @imageParts
       for page, i in frame.data
-        data.set page, offset
         if i is frame.data.length - 1
+          data.set page.slice(0, frame.cursor), offset
           offset += frame.cursor
         else
+          data.set page, offset
           offset += frame.pageSize
 
     image = new Blob [data],
