@@ -4,7 +4,6 @@ browser = require './browser.coffee'
 class GIF extends EventEmitter
 
   defaults =
-    workerScript: 'gif.worker.js'
     workers: 2
     repeat: 0 # repeat forever, -1 = repeat once
     background: '#fff'
@@ -21,6 +20,7 @@ class GIF extends EventEmitter
     dispose: -1
 
   constructor: (options) ->
+    super options
     @running = false
 
     @options = {}
@@ -104,7 +104,7 @@ class GIF extends EventEmitter
     numWorkers = Math.min(@options.workers, @frames.length)
     [@freeWorkers.length...numWorkers].forEach (i) =>
       @log "spawning worker #{ i }"
-      worker = new Worker @options.workerScript
+      worker = new Worker 'gif.worker.coffee'
       worker.onmessage = (event) =>
         @activeWorkers.splice @activeWorkers.indexOf(worker), 1
         @freeWorkers.push worker
