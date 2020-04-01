@@ -12,7 +12,7 @@
     "uglify-js": "^2.7.5"
   },
   "scripts": {
-    "prepublish": "./bin/build"
+    "prepare": "./bin/build"
   },
   "browser": "./dist/gif.js",
   "keywords": [
