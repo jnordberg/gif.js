@@ -52,6 +52,7 @@ Options can be passed to the constructor or using the `setOptions` method.
 | height       | `null`          | output image height                                |
 | transparent  | `null`          | transparent hex color, `0x00FF00` = green          |
 | dither       | `false`         | dithering method, e.g. `FloydSteinberg-serpentine` |
+| globalPalette| `false`         | global palette for all frames                      |
 | debug        | `false`         | whether to print debug information to console      |
 
 If width or height is `null` image size will be deteremined by first frame added.
@@ -62,6 +63,8 @@ Available dithering methods are:
  * `FalseFloydSteinberg`
  * `Stucki`
  * `Atkinson`
+
+`globalPalette` can be `true`, `false`, or an array of [r,g,b,r,g,b,...]. If `globalPalette` is `true` the global palette will be created from the first frame.
 
 You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 
