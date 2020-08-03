@@ -15,6 +15,7 @@ renderFrame = (frame) ->
   encoder.setQuality frame.quality
   encoder.setDither frame.dither
   encoder.setGlobalPalette frame.globalPalette
+  encoder.setPosition frame.left, frame.top
   encoder.addFrame frame.data
   encoder.finish() if frame.last
   if frame.globalPalette == true
@@ -26,6 +27,7 @@ renderFrame = (frame) ->
   frame.pageSize = stream.constructor.pageSize
 
   if frame.canTransfer
+    # frame.data 是个数组，数组元素是 Uint8Array 对象，Uint8Array 对象有buffer属性。
     transfer = (page.buffer for page in frame.data)
     self.postMessage frame, transfer
   else

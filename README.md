@@ -75,6 +75,13 @@ You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 | delay        | `500`           | frame delay                                        |
 | copy         | `false`         | copy the pixel data                                |
 | dispose      | `-1`            | frame disposal code. See [GIF89a Spec][gif89aspec] |
+| localPalette | `false`         | local palette. true, false or rgb array            |
+| left         | 0               | frame image position left                          |
+| top          | 0               | frame image position top                           |
+| width        | `null`          | frame image width                                  |
+| height       | `null`          | frame image height                                 |
+
+`localPalette` can be `true`, `false`, or an array of [r,g,b,r,g,b,...]. If `localPalette` is `true` the local palette will be created from the frame image.
 
 [gif89aspec]: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
 
