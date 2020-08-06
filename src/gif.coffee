@@ -184,6 +184,7 @@ class GIF extends EventEmitter
   getTask: (frame) ->
     index = @frames.indexOf frame
     task =
+      globalOptions: @options
       index: index
       last: index is (@frames.length - 1)
       delay: frame.delay

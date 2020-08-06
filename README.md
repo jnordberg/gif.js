@@ -80,6 +80,7 @@ You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 | top          | 0               | frame image position top                           |
 | width        | `null`          | frame image width                                  |
 | height       | `null`          | frame image height                                 |
+| transparent  | ?               | transparent                                        |
 
 `localPalette` can be `true`, `false`, or an array of [r,g,b,r,g,b,...]. If `localPalette` is `true` the local palette will be created from the frame image.
 

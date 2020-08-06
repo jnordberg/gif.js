@@ -12,6 +12,7 @@
     "uglify-js": "^2.7.5"
   },
   "scripts": {
+    "coffee": "coffee -c src/gif.coffee src/gif.worker.coffee",
     "prepublish": "./bin/build"
   },
   "browser": "./dist/gif.js",

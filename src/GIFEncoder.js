@@ -161,7 +161,7 @@ GIFEncoder.prototype.setLocalPalette = function(colorTab) {
   actually deferred until the next frame is received so that timing
   data can be inserted.  Invoking finish() flushes all frames.
 */
-GIFEncoder.prototype.addFrame = function(imageData) {
+GIFEncoder.prototype.addFrame = function(imageData, frameOptions) {
   this.image = imageData;
   this.colorTab = null;
   if (this.localPalette && this.localPalette.slice) {
@@ -188,7 +188,7 @@ GIFEncoder.prototype.addFrame = function(imageData) {
   }
 
   this.writeGraphicCtrlExt(); // write graphic control extension
-  this.writeImageDesc(); // image descriptor
+  this.writeImageDesc(frameOptions); // image descriptor
   if (this.localPalette !== false) this.writePalette(this.colorTab); // local color table
   this.writePixels(); // encode and write pixel data
 
@@ -490,12 +490,12 @@ GIFEncoder.prototype.writeGraphicCtrlExt = function() {
 /*
   Writes Image Descriptor
 */
-GIFEncoder.prototype.writeImageDesc = function() {
+GIFEncoder.prototype.writeImageDesc = function(frameOptions) {
   this.out.writeByte(0x2c); // image separator
-  this.writeShort(this.left); // image position x,y = 0,0
-  this.writeShort(this.top);
-  this.writeShort(this.width); // image size
-  this.writeShort(this.height);
+  this.writeShort(frameOptions.left || 0); // image position x,y = 0,0
+  this.writeShort(frameOptions.top || 0);
+  this.writeShort(frameOptions.width || this.width); // image size
+  this.writeShort(frameOptions.height || this.height);
 
   // packed fields
   if (this.localPalette === false) {

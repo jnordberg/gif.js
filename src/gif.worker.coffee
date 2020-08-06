@@ -1,7 +1,7 @@
 GIFEncoder = require './GIFEncoder.js'
 
 renderFrame = (frame) ->
-  encoder = new GIFEncoder frame.width, frame.height
+  encoder = new GIFEncoder frame.globalOptions.width, frame.globalOptions.height
 
   if frame.index is 0
     encoder.writeHeader()
@@ -15,8 +15,9 @@ renderFrame = (frame) ->
   encoder.setQuality frame.quality
   encoder.setDither frame.dither
   encoder.setGlobalPalette frame.globalPalette
+  frameOptions = Object.assign({}, frame, { data: null })
   encoder.setPosition frame.left, frame.top
-  encoder.addFrame frame.data
+  encoder.addFrame frame.data, frameOptions
   encoder.finish() if frame.last
   if frame.globalPalette == true
     frame.globalPalette = encoder.getGlobalPalette()
