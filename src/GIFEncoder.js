@@ -56,6 +56,9 @@ function GIFEncoder(width, height) {
   // image size
   this.width = ~~width;
   this.height = ~~height;
+  // image position
+  this.left = 0;
+  this.top = 0;
 
   // transparent color if given
   this.transparent = null;
@@ -82,6 +85,7 @@ function GIFEncoder(width, height) {
   this.sample = 10; // default sample interval for quantizer
   this.dither = false; // default dithering
   this.globalPalette = false;
+  this.localPalette = false;
 
   this.out = new ByteArray();
 }
@@ -138,23 +142,45 @@ GIFEncoder.prototype.setTransparent = function(color) {
 };
 
 /*
+  Sets left and top
+*/
+GIFEncoder.prototype.setPosition = function(left, top) {
+  this.left = ~~left || 0;
+  this.top = ~~top || 0;
+};
+
+/*
+  Sets local color table
+*/
+GIFEncoder.prototype.setLocalPalette = function(colorTab) {
+  this.localPalette = colorTab || false;
+};
+
+/*
   Adds next GIF frame. The frame is not written immediately, but is
   actually deferred until the next frame is received so that timing
   data can be inserted.  Invoking finish() flushes all frames.
 */
-GIFEncoder.prototype.addFrame = function(imageData) {
+GIFEncoder.prototype.addFrame = function(imageData, frameOptions) {
   this.image = imageData;
-
-  this.colorTab = this.globalPalette && this.globalPalette.slice ? this.globalPalette : null;
+  this.colorTab = null;
+  if (this.localPalette && this.localPalette.slice) {
+    this.colorTab = this.localPalette;
+  } else if (this.localPalette !== true) {
+    this.localPalette = false;
+    this.colorTab = this.globalPalette && this.globalPalette.slice ? this.globalPalette : null;
+  }
+  // localPalette possible value: true, false, array
 
   this.getImagePixels(); // convert to correct format if necessary
   this.analyzePixels(); // build color table & map pixels
 
-  if (this.globalPalette === true) this.globalPalette = this.colorTab;
+  // global color table will always be created and used
+  if (!this.globalPalette || !this.globalPalette.slice) this.globalPalette = this.colorTab;
 
   if (this.firstFrame) {
     this.writeLSD(); // logical screen descriptior
-    this.writePalette(); // global color table
+    this.writePalette(this.globalPalette); // global color table
     if (this.repeat >= 0) {
       // use NS app extension to indicate reps
       this.writeNetscapeExt();
@@ -162,8 +188,8 @@ GIFEncoder.prototype.addFrame = function(imageData) {
   }
 
   this.writeGraphicCtrlExt(); // write graphic control extension
-  this.writeImageDesc(); // image descriptor
-  if (!this.firstFrame && !this.globalPalette) this.writePalette(); // local color table
+  this.writeImageDesc(frameOptions); // image descriptor
+  if (this.localPalette !== false) this.writePalette(this.colorTab); // local color table
   this.writePixels(); // encode and write pixel data
 
   this.firstFrame = false;
@@ -464,16 +490,16 @@ GIFEncoder.prototype.writeGraphicCtrlExt = function() {
 /*
   Writes Image Descriptor
 */
-GIFEncoder.prototype.writeImageDesc = function() {
+GIFEncoder.prototype.writeImageDesc = function(frameOptions) {
   this.out.writeByte(0x2c); // image separator
-  this.writeShort(0); // image position x,y = 0,0
-  this.writeShort(0);
-  this.writeShort(this.width); // image size
-  this.writeShort(this.height);
+  this.writeShort(frameOptions.left || 0); // image position x,y = 0,0
+  this.writeShort(frameOptions.top || 0);
+  this.writeShort(frameOptions.width || this.width); // image size
+  this.writeShort(frameOptions.height || this.height);
 
   // packed fields
-  if (this.firstFrame || this.globalPalette) {
-    // no LCT - GCT is used for first (or only) frame
+  if (this.localPalette === false) {
+    // no LCT
     this.out.writeByte(0);
   } else {
     // specify normal LCT

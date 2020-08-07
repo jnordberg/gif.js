@@ -52,6 +52,7 @@ Options can be passed to the constructor or using the `setOptions` method.
 | height       | `null`          | output image height                                |
 | transparent  | `null`          | transparent hex color, `0x00FF00` = green          |
 | dither       | `false`         | dithering method, e.g. `FloydSteinberg-serpentine` |
+| globalPalette| `false`         | global palette for all frames                      |
 | debug        | `false`         | whether to print debug information to console      |
 
 If width or height is `null` image size will be deteremined by first frame added.
@@ -63,6 +64,8 @@ Available dithering methods are:
  * `Stucki`
  * `Atkinson`
 
+`globalPalette` can be `true`, `false`, or an array of [r,g,b,r,g,b,...]. If `globalPalette` is `true` the global palette will be created from the first frame.
+
 You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 
 ### addFrame options
@@ -72,6 +75,14 @@ You can add `-serpentine` to use serpentine scanning, e.g. `Stucki-serpentine`.
 | delay        | `500`           | frame delay                                        |
 | copy         | `false`         | copy the pixel data                                |
 | dispose      | `-1`            | frame disposal code. See [GIF89a Spec][gif89aspec] |
+| localPalette | `false`         | local palette. true, false or rgb array            |
+| left         | 0               | frame image position left                          |
+| top          | 0               | frame image position top                           |
+| width        | `null`          | frame image width                                  |
+| height       | `null`          | frame image height                                 |
+| transparent  | ?               | transparent                                        |
+
+`localPalette` can be `true`, `false`, or an array of [r,g,b,r,g,b,...]. If `localPalette` is `true` the local palette will be created from the frame image.
 
 [gif89aspec]: https://www.w3.org/Graphics/GIF/spec-gif89a.txt
 

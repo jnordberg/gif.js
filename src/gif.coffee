@@ -19,8 +19,13 @@ class GIF extends EventEmitter
     delay: 500 # ms
     copy: false
     dispose: -1
+    left: 0
+    top: 0
+    width: null # size of the frame
+    height: null
 
   constructor: (options) ->
+    super options
     @running = false
 
     @options = {}
@@ -48,8 +53,8 @@ class GIF extends EventEmitter
       frame[key] = options[key] or frameDefaults[key]
 
     # use the images width and height for options unless already set
-    @setOption 'width', image.width unless @options.width?
-    @setOption 'height', image.height unless @options.height?
+    @setOption 'width', (image.width || image.canvas?.width) unless @options.width?
+    @setOption 'height', (image.height || image.canvas?.height) unless @options.height?
 
     if ImageData? and image instanceof ImageData
        frame.data = image.data
@@ -179,13 +184,16 @@ class GIF extends EventEmitter
   getTask: (frame) ->
     index = @frames.indexOf frame
     task =
+      globalOptions: @options
       index: index
       last: index is (@frames.length - 1)
       delay: frame.delay
       dispose: frame.dispose
       transparent: frame.transparent
-      width: @options.width
-      height: @options.height
+      left: frame.left || 0
+      top: frame.top || 0
+      width: frame.width || @options.width
+      height: frame.height || @options.height
       quality: @options.quality
       dither: @options.dither
       globalPalette: @options.globalPalette
