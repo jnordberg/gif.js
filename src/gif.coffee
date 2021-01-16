@@ -69,6 +69,8 @@ class GIF extends EventEmitter
     @frames.push frame
 
   render: ->
+    throw new Error 'Frames must be added prior to rendering' if @frames.length == 0
+
     throw new Error 'Already running' if @running
 
     if not @options.width? or not @options.height?
@@ -147,6 +149,7 @@ class GIF extends EventEmitter
       type: 'image/gif'
 
     @emit 'finished', image, data
+    @running = false
 
   renderNextFrame: ->
     throw new Error 'No free workers' if @freeWorkers.length is 0
