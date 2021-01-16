@@ -149,6 +149,7 @@ class GIF extends EventEmitter
       type: 'image/gif'
 
     @emit 'finished', image, data
+    @running = false
 
   renderNextFrame: ->
     throw new Error 'No free workers' if @freeWorkers.length is 0
