@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "JavaScript GIF encoding library",
   "author": "Johan Nordberg <code@johan-nordberg.com>",
-  "main": "index.js",
+  "main": "dist/gif.js",
   "repository": "https://github.com/jnordberg/gif.js.git",
   "devDependencies": {
     "browserify": "^13.1.1",
