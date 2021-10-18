@@ -63,6 +63,8 @@ class GIF extends EventEmitter
         frame.data = @getImageData image
       else
         frame.image = image
+    else if image.byteLength?
+      frame.data = image
     else
       throw new Error 'Invalid image'
 
