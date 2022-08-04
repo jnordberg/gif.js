@@ -41,18 +41,19 @@ gif.render();
 
 Options can be passed to the constructor or using the `setOptions` method.
 
-| Name         | Default         | Description                                        |
-| -------------|-----------------|----------------------------------------------------|
-| repeat       | `0`             | repeat count, `-1` = no repeat, `0` = forever      |
-| quality      | `10`            | pixel sample interval, lower is better             |
-| workers      | `2`             | number of web workers to spawn                     |
-| workerScript | `gif.worker.js` | url to load worker script from                     |
-| background   | `#fff`          | background color where source image is transparent |
-| width        | `null`          | output image width                                 |
-| height       | `null`          | output image height                                |
-| transparent  | `null`          | transparent hex color, `0x00FF00` = green          |
-| dither       | `false`         | dithering method, e.g. `FloydSteinberg-serpentine` |
-| debug        | `false`         | whether to print debug information to console      |
+| Name          | Default         | Description                                        |
+| --------------|-----------------|----------------------------------------------------|
+| repeat        | `0`             | repeat count, `-1` = no repeat, `0` = forever      |
+| quality       | `10`            | pixel sample interval, lower is better             |
+| workers       | `2`             | number of web workers to spawn                     |
+| workerScript  | `gif.worker.js` | url to load worker script from                     |
+| background    | `#fff`          | background color where source image is transparent |
+| width         | `null`          | output image width                                 |
+| height        | `null`          | output image height                                |
+| globalPalette | `false`         | color palette based on the first frame only        |
+| transparent   | `null`          | transparent hex color, `0x00FF00` = green          |
+| dither        | `false`         | dithering method, e.g. `FloydSteinberg-serpentine` |
+| debug         | `false`         | whether to print debug information to console      |
 
 If width or height is `null` image size will be deteremined by first frame added.
 
