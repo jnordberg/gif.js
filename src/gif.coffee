@@ -45,7 +45,10 @@ class GIF extends EventEmitter
     frame = {}
     frame.transparent = @options.transparent
     for key of frameDefaults
-      frame[key] = options[key] or frameDefaults[key]
+      if options[key] == 0
+        frame[key] = options[key]
+      else
+        frame[key] = options[key] or frameDefaults[key]
 
     # use the images width and height for options unless already set
     @setOption 'width', image.width unless @options.width?
